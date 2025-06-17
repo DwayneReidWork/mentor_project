@@ -1,4 +1,3 @@
-#define _GNU_SOURCE
 #define _XOPEN_SOURCE 700
 
 #include <arpa/inet.h>

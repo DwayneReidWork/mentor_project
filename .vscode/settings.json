@@ -2,6 +2,7 @@
     "files.associations": {
         "*.py": "python",
         "main.h": "c",
+        "netdb.h": "c",
         "server.h": "c",
         "socket.h": "c",
         "inet.h": "c",
@@ -12,5 +13,7 @@
         "errno.h": "c",
         "packet.h": "c",
         "wait.h": "c"
-    }
+    },
+    "C_Cpp.default.cStandard": "c99",
+    "C_Cpp.default.cppStandard": "gnu++17"
 }

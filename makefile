@@ -1,4 +1,4 @@
-CC = gcc --std gnu99
+CC = gcc --std gnu99 -D_GNU_SOURCE
 
 CFLAGS = -Wall -g
 
@@ -30,5 +30,8 @@ v:
 vv:
 	valgrind --leak-check=full ./$(EXEC)
 
+#valdrind with full detailed output
+vvv:
+	valgrind --leak-check=full -s ./$(EXEC)
 
 .PHONY: all clean

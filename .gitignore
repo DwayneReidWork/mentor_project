@@ -1,4 +1,14 @@
-*.o
+# misc
 __pycache__
+*.egg-info
+.venv
+
+# Specific Files
+*.o
 *.txt
+
+# Folders
+/game_saves
+
+#Binary Files
 chess

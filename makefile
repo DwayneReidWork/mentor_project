@@ -1,37 +1,39 @@
 CC = gcc --std gnu99 -D_GNU_SOURCE
 
-CFLAGS = -Wall -g
+CFLAGS = -Wall -g -I ./inc
 
 # Source and header files
-SRCS = chess_server/src/main.c chess_server/src/game.c chess_server/src/server.c
-HDRS = chess_server/inc/game.h chess_server/inc/server.h
+SRCS = chess_server/src/main.c chess_server/src/game.c chess_server/src/server.c chess_server/src/packet.c
+
+HDRS = chess_server/inc/game.h chess_server/inc/server.h chess_server/inc/packet.h
 
 # Object files
 OBJS = $(SRCS:.c=.o)
 
 # Executable name
 EXEC = chess
+
 # Default rule
 all: clean $(EXEC)
 
 # Link object files to create executable
-$(EXEC): $(SRCS) $(HDRS)
+$(EXEC): $(SRCS)
 	$(CC) $(CFLAGS) -o $@ $^
 
 # Clean rule
 clean:
 	rm -f $(EXEC) $(OBJS)
 
-#Valgrind
-v:
+# Clean build + valgrind with -v (verbose)
+v: clean $(EXEC)
 	valgrind -v ./$(EXEC)
 
-#valgrind with leakcheck
-vv:
+# Clean build + valgrind with leak check
+vv: clean $(EXEC)
 	valgrind --leak-check=full ./$(EXEC)
 
-#valdrind with full detailed output
-vvv:
+# Clean build + valgrind with leak check + summary
+vvv: clean $(EXEC)
 	valgrind --leak-check=full -s ./$(EXEC)
 
 .PHONY: all clean

@@ -36,6 +36,7 @@ int signal_handler_setup()
 
 int handle_client(int client_sock)
 {
+    // meat of the game
     return 0;
 }
 

@@ -14,25 +14,3 @@
 #define ROOK 1 << 3   // 0b00001000
 #define QUEEN 1 << 4  // 0b00010000
 #define KING 1 << 5   // 0b00100000
-
-// later...
-
-uint8_t piece = BLACK | BISHOP;
-// test side
-
-if ((piece & WHITE) == WHITE)
-{
-    // is white piece
-}
-else
-{
-    // is black piece? technically can't assume the black bit is set
-}
-if ((piece & NOCOLOR) == BISHOP)
-{
-    // any bishop
-}
-if ((piece & (WHITE | PAWN)) == (WHITE | PAWN))
-{
-    // specifically a white pawn
-}

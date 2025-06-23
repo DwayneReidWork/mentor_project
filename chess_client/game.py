@@ -1,9 +1,10 @@
 import cmd2
 import socket
-import struct
 from .netcomm import send_all, recv_expected
 from .packet import Connect
 from .game_pieces import PieceType as PT, Board
+from .game_mechanics import move_piece
+board = Board.new_board()
 
 def port_type(port_str: str) -> int:
     port = int(port_str)
@@ -29,6 +30,15 @@ class CmdController(cmd2.Cmd):
         connection_packet = Connect(args.port).pack()
         send_all(self.sock, connection_packet)
 
-        board = Board.new_board()
-        print(board) #uses modified str function
+    def do_display_board(self, args):
         board.display()
+
+    def do_move_piece(self, args):
+        move_piece(board)
+    
+    def do_new_game(self, args):
+        board = Board.new_board()
+        move_piece(board)
+
+    def do_small_display(self, args):
+        Board.display_small(board)

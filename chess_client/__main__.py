@@ -1,5 +1,4 @@
 from .game import CmdController
-#from game import CmdController
 import sys
 
 controller = CmdController()

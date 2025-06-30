@@ -53,7 +53,7 @@ class Board:
         return self.set_piece(row, col, PieceType.EMPTY)
 
     def display(self):
-        os.system("clear")
+        #os.system("clear")
         lines = []
         lines.append("    A   B   C   D   E   F   G   H")
         horiz = "  +" + "---+" * 8

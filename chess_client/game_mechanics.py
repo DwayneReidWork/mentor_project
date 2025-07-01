@@ -128,8 +128,47 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
                 valid = False
 
         case PieceType.QUEEN:
-            print("Queen Logic")
-            valid = True
+            direction_x = to_col - from_col
+            direction_y = to_row - from_row
+
+            if (direction_x == 0 and direction_y != 0) or (direction_x != 0 and direction_y == 0):
+                step_x = 0
+                step_y = 0
+
+                if direction_x != 0:
+                    step_x = 1 if direction_x > 0 else -1
+                if direction_y != 0:
+                    step_y = 1 if direction_y > 0 else -1
+
+                x, y = from_col + step_x, from_row + step_y
+
+                while (x != to_col or y != to_row):
+                    if board.get_piece(y, x) != PieceType.EMPTY:
+                        print("Path is blocked!")
+                        valid = False
+                        return valid
+                    x += step_x
+                    y += step_y
+                valid = True
+
+            elif abs(direction_x) == abs(direction_y):
+                step_x = 1 if direction_x > 0 else -1
+                step_y = 1 if direction_y > 0 else -1
+
+                x, y = from_col + step_x, from_row + step_y
+                while x != to_col and y != to_row:
+                    if board.get_piece(y, x) != PieceType.EMPTY:
+                        print("Path is blocked!")
+                        valid = False
+                        return valid
+                    x += step_x
+                    y += step_y
+                valid = True
+
+            else:
+                print("Invalid Queen move.")
+                valid = False
+
         case PieceType.KING:
             direction_x = to_col - from_col
             direction_y = to_row - from_row

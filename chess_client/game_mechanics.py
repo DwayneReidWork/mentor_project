@@ -28,11 +28,20 @@ def move_piece(board: Board):
         to_row, to_col = notation_to_index(to_square)
 
         if check_valid_move(piece, from_row, from_col, to_row, to_col, board) == True:
-            board.move_piece(from_row, from_col, to_row, to_col)
-            print(f"Moved {piece.name} from {from_square} to {to_square}.")
-            board.display()
+            end_piece = board.get_piece(to_row, to_col)
+            if (end_piece == PieceType.EMPTY or
+            (piece & PieceType.WHITE and end_piece & PieceType.BLACK) or
+            (piece & PieceType.BLACK and end_piece & PieceType.WHITE)):
+                board.move_piece(from_row, from_col, to_row, to_col)
+                print(f"Moved {piece.name} from {from_square} to {to_square}.")
+                board.display()
+            elif (end_piece == PieceType.EMPTY or
+            (piece & PieceType.WHITE and end_piece & PieceType.WHITE) or
+            (piece & PieceType.BLACK and end_piece & PieceType.BLACK)):
+                print("Space Occupied by same color piece. Invalid Move.")
             return board
         else:
+            print("Some other Error Occured.")
             continue
 
 def notation_to_index(square: str):
@@ -52,47 +61,83 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
         case PieceType.PAWN:
             if piece & PieceType.WHITE:
                 if (to_row != (from_row + 1)):
-                    print("Invalid Move")
+                    print("Invalid Pawn Move")
                 else:
                     valid = True
             elif piece & PieceType.BLACK:
                 if (to_row != (from_row - 1)):
-                    print("Invalid Move")
+                    print("Invalid Pawn Move")
                 else:
                     valid = True
         case PieceType.KNIGHT:
-            print("Knight Logic")
-            valid = True
+            jump = abs(to_row - from_row), abs(to_col - from_col)
+            if jump in [(1,2), (2,1)]:
+                valid = True    
+            else:
+                print("Invalid Knight move")
         case PieceType.BISHOP:
-            if piece & PieceType.NOCOLOR:
-                direction_x = to_col - from_col
-                direction_y = to_row - from_row
+            direction_x = to_col - from_col
+            direction_y = to_row - from_row
 
-                #for calculating left/right and up/down and if blocked
-                if abs(direction_x) == abs(direction_y):
+            #for calculating left/right and up/down and if blocked
+            if abs(direction_x) == abs(direction_y):
+                step_x = 1 if direction_x > 0 else -1
+                step_y = 1 if direction_y > 0 else -1
+
+                # Check squares in diags excluding end
+                # the base move method will handle dealing with if the selected square is occupied by other piecde.
+                x, y = from_col + step_x, from_row + step_y
+                while x != to_col and y != to_row:
+                    if board.get_piece(y, x) != PieceType.EMPTY:
+                        print("Path is blocked!")
+                        valid = False
+                        return valid
+                    else:
+                        x += step_x
+                        y += step_y
+                valid = True
+            else:
+                print("Invalid Bishop move.")
+        case PieceType.ROOK:
+            direction_x = to_col - from_col
+            direction_y = to_row - from_row
+            
+            #check that we're only moving left/right or up/down
+            if (direction_x == 0 and direction_y != 0) or (direction_x != 0 and direction_y == 0):
+                step_x = 0
+                step_y = 0
+
+                if direction_x != 0:
                     step_x = 1 if direction_x > 0 else -1
+                if direction_y != 0:
                     step_y = 1 if direction_y > 0 else -1
 
-                    # Check squares along the diagonal, excluding end
-                    x, y = from_col + step_x, from_row + step_y
-                    while x != to_col and y != to_row:
-                        if board.get_piece(y, x) != PieceType.EMPTY:
-                            print("Path is blocked!")
-                        else:
-                            x += step_x
-                            y += step_y
-                        valid = True
-                else:
-                    print("Invalid bishop move (must be diagonal).")
-        case PieceType.ROOK:
-            print("Rook Logic")
-            valid = True
+                x, y = from_col + step_x, from_row + step_y
+
+                #check for empty along path 
+                while (x != to_col or y != to_row):
+                    if board.get_piece(y, x) != PieceType.EMPTY:
+                        print("Path is blocked!")
+                        valid = False
+                        return valid
+                    x += step_x
+                    y += step_y
+                valid = True
+            else:
+                print("Invalid Rook move.")
+                valid = False
+
         case PieceType.QUEEN:
             print("Queen Logic")
             valid = True
         case PieceType.KING:
-            print("King Logic")
-            valid = True
-        case _:
-            print("Unknown piece")
+            direction_x = to_col - from_col
+            direction_y = to_row - from_row
+
+            move = abs(to_row - from_row), abs(to_col - from_col)
+            if move in [(0,1), (1,0), (1,1)]:
+                valid = True    
+            else:
+                print("Invalid King Move")
+                valid = False
     return valid

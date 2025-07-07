@@ -41,7 +41,8 @@ def move_piece(board: Board):
             (piece & PieceType.WHITE and end_piece & PieceType.WHITE) or
             (piece & PieceType.BLACK and end_piece & PieceType.BLACK)):
                 print("Space Occupied by same color piece. Invalid Move.")
-            return board
+            board.display()
+            #return board
         else:
             print("Some other Error Occured.")
             continue
@@ -61,30 +62,41 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
     valid = False
     match piece & PieceType.NOCOLOR:
         case PieceType.PAWN:
-            if piece & PieceType.WHITE:
-                home_row = 6
-                if (from_row == home_row):
-                    if (to_row == home_row - 2):
-                        valid = True
-                    else:
-                        valid = False
-                        return valid
-                elif (to_row != (from_row + 1)):
-                    print("Invalid Pawn Move")
-                else:
+            #directional movement by color
+            direction = -1 if piece & PieceType.WHITE else 1
+            #set home row for each color
+            home_row = 6 if piece & PieceType.WHITE else 1
+            row_diff = to_row - from_row
+            col_diff = to_col - from_col
+
+            target = board.get_piece(to_row, to_col)
+
+            if row_diff == direction and col_diff == 0:
+                if target & PieceType.NOCOLOR == PieceType.EMPTY:
                     valid = True
-            elif piece & PieceType.BLACK:
-                home_row = 1
-                if (from_row == home_row):
-                    if (to_row == (home_row + 2)):
-                        valid = True
-                    else:
-                        valid = False
-                        return valid
-                if (to_row != (from_row - 1)):
-                    print("Invalid Pawn Move")
                 else:
+                    print("Blocked! Can't move forward to occupied square.")
+                    valid = False
+            # 2 square move from start
+            elif row_diff == 2 * direction and col_diff == 0 and from_row == home_row:
+                intermediate_row = from_row + direction
+                if (board.get_piece(intermediate_row, from_col) & PieceType.NOCOLOR == PieceType.EMPTY and
+                    target & PieceType.NOCOLOR == PieceType.EMPTY):
                     valid = True
+                else:
+                    print("2 Step move blocked.")
+                    valid = False
+            # Diagonal capture
+            elif row_diff == direction and abs(col_diff) == 1:
+                if (target & PieceType.NOCOLOR != PieceType.EMPTY and
+                    (target & PieceType.COLOR_MASK) != (piece & PieceType.COLOR_MASK)):
+                    valid = True
+                else:
+                    print("No enemy piece to capture diagonally.")
+                    valid = False
+            else:
+                print("Invalid Pawn Move.")
+                valid = False
         case PieceType.KNIGHT:
             jump = abs(to_row - from_row), abs(to_col - from_col)
             if jump in [(1,2), (2,1)]:

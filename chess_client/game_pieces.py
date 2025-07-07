@@ -15,6 +15,8 @@ class PieceType(IntFlag):
     WHITE = auto()
     BLACK = auto()
     NOCOLOR = 0b00111111
+    #added for attacks
+    COLOR_MASK = WHITE | BLACK
 
 PIECE_UNICODE = {
     PieceType.WHITE | PieceType.KING:'\u2654',

@@ -1,6 +1,6 @@
 import re
-#from game_pieces import PieceType, Board
-from .game_pieces import PieceType, Board
+from game_pieces import PieceType, Board
+#from .game_pieces import PieceType, Board
 
 def move_piece(board: Board):
     valid_squares = "^[a-hA-H][1-8]$"
@@ -12,10 +12,12 @@ def move_piece(board: Board):
         if not re.match(valid_squares, from_square):
             print("Invalid source square.")
             continue
+
         from_row, from_col = notation_to_index(from_square)
 
         piece = board.get_piece(from_row, from_col)
 
+        print(f"Selected piece at {from_square} is {piece.name}")
         if piece == PieceType.EMPTY:
             print("No piece at that location to move.")
             continue
@@ -60,11 +62,25 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
     match piece & PieceType.NOCOLOR:
         case PieceType.PAWN:
             if piece & PieceType.WHITE:
-                if (to_row != (from_row + 1)):
+                home_row = 6
+                if (from_row == home_row):
+                    if (to_row == home_row - 2):
+                        valid = True
+                    else:
+                        valid = False
+                        return valid
+                elif (to_row != (from_row + 1)):
                     print("Invalid Pawn Move")
                 else:
                     valid = True
             elif piece & PieceType.BLACK:
+                home_row = 1
+                if (from_row == home_row):
+                    if (to_row == (home_row + 2)):
+                        valid = True
+                    else:
+                        valid = False
+                        return valid
                 if (to_row != (from_row - 1)):
                     print("Invalid Pawn Move")
                 else:

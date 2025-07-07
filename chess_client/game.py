@@ -1,14 +1,14 @@
 import cmd2
 import socket
-from .netcomm import send_all, recv_expected
-from .packet import Connect
-from .game_pieces import PieceType as PT, Board
-from .game_mechanics import move_piece
+# from .netcomm import send_all, recv_expected
+# from .packet import Connect
+# from .game_pieces import PieceType as PT, Board
+# from .game_mechanics import move_piece
 #for debugging
-# from netcomm import send_all, recv_expected
-# from packet import Connect
-# from game_pieces import PieceType as PT, Board
-# from game_mechanics import move_piece
+from netcomm import send_all, recv_expected
+from packet import Connect
+from game_pieces import PieceType as PT, Board
+from game_mechanics import move_piece
 
 def port_type(port_str: str) -> int:
     port = int(port_str)

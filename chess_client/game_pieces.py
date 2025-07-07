@@ -12,8 +12,8 @@ class PieceType(IntFlag):
     ROOK = auto()
     QUEEN = auto()
     KING = auto()
-    BLACK = auto()
     WHITE = auto()
+    BLACK = auto()
     NOCOLOR = 0b00111111
 
 PIECE_UNICODE = {
@@ -72,20 +72,20 @@ class Board:
     def new_board():
         board = Board()
         # White Pieces
-        board.set_pieces([(1, col) for col in range(8)], PieceType.WHITE | PieceType.PAWN)
-        board.set_pieces([(0, 0), (0, 7)], PieceType.WHITE | PieceType.ROOK)
-        board.set_pieces([(0, 1), (0, 6)], PieceType.WHITE | PieceType.KNIGHT)
-        board.set_pieces([(0, 2), (0, 5)], PieceType.WHITE | PieceType.BISHOP)
-        board.set_piece(0, 3, PieceType.WHITE | PieceType.QUEEN)
-        board.set_piece(0, 4, PieceType.WHITE | PieceType.KING)
+        board.set_pieces([(6, col) for col in range(8)], PieceType.WHITE | PieceType.PAWN)
+        board.set_pieces([(7, 0), (7, 7)], PieceType.WHITE | PieceType.ROOK)
+        board.set_pieces([(7, 1), (7, 6)], PieceType.WHITE | PieceType.KNIGHT)
+        board.set_pieces([(7, 2), (7, 5)], PieceType.WHITE | PieceType.BISHOP)
+        board.set_piece(7, 3, PieceType.WHITE | PieceType.QUEEN)
+        board.set_piece(7, 4, PieceType.WHITE | PieceType.KING)
 
-        #Black Pieces
-        board.set_pieces([(6, col) for col in range(8)], PieceType.BLACK | PieceType.PAWN)
-        board.set_pieces([(7, 0), (7, 7)], PieceType.BLACK | PieceType.ROOK)
-        board.set_pieces([(7, 1), (7, 6)], PieceType.BLACK | PieceType.KNIGHT)
-        board.set_pieces([(7, 2), (7, 5)], PieceType.BLACK | PieceType.BISHOP)
-        board.set_piece(7, 3, PieceType.BLACK | PieceType.QUEEN)
-        board.set_piece(7, 4, PieceType.BLACK | PieceType.KING)
+        # Black Pieces
+        board.set_pieces([(1, col) for col in range(8)], PieceType.BLACK | PieceType.PAWN)
+        board.set_pieces([(0, 0), (0, 7)], PieceType.BLACK | PieceType.ROOK)
+        board.set_pieces([(0, 1), (0, 6)], PieceType.BLACK | PieceType.KNIGHT)
+        board.set_pieces([(0, 2), (0, 5)], PieceType.BLACK | PieceType.BISHOP)
+        board.set_piece(0, 3, PieceType.BLACK | PieceType.QUEEN)
+        board.set_piece(0, 4, PieceType.BLACK | PieceType.KING)
         return board
     
     def move_piece(self, from_row, from_col, to_row, to_col):

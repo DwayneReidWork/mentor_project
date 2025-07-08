@@ -3,25 +3,16 @@
 #include <netinet/in.h>
 #include <sys/types.h>
 
-/*
- board = [
-        ['r', 'n', 'b', 'q', 'k', 'b', 'n', 'r'],
-        ['p', 'p', 'p', 'p', 'p', 'p', 'p', 'p'],
-        ['.', '.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.', '.'],
-        ['.', '.', '.', '.', '.', '.', '.', '.'],
-        ['P', 'P', 'P', 'P', 'P', 'P', 'P', 'P'],
-        ['R', 'N', 'B', 'Q', 'K', 'B', 'N', 'R']
-    ]
- */
+#define MAX_USERNAME_LEN 128
 
 typedef enum __attribute__((__packed__))
 {
-    CONNECT = 1, // Eventually Login/Register
-    MOVE,
-    BOARD_STATE,
+    P_CONNECT = 1, // Eventually Login/Register
+    P_MOVE,
+    P_BOARD_STATE,
 } PacketType;
+
+const char *getPacketType(PacketType packet);
 
 // Packet Type (Header for All)
 typedef struct __attribute__((__packed__))
@@ -30,6 +21,14 @@ typedef struct __attribute__((__packed__))
     PacketType msg_type;
     uint32_t p_len;
 } p_header_t;
+
+typedef struct __attribute__((__packed__))
+{
+    p_header_t header;
+    uint32_t port;
+    uint32_t username_len;
+    char user_name[MAX_USERNAME_LEN];
+} p_connection_t;
 
 typedef struct __attribute__((__packed__))
 {

@@ -1,6 +1,6 @@
 import re
-from game_pieces import PieceType, Board
-#from .game_pieces import PieceType, Board
+#from game_pieces import PieceType, Board
+from .game_pieces import PieceType, Board
 
 def move_piece(board: Board):
     valid_squares = "^[a-hA-H][1-8]$"
@@ -44,6 +44,7 @@ def move_piece(board: Board):
             board.display()
             #return board
         else:
+            #hit when invalid move tried
             print("Some other Error Occured.")
             continue
 
@@ -97,12 +98,14 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
             else:
                 print("Invalid Pawn Move.")
                 valid = False
+
         case PieceType.KNIGHT:
             jump = abs(to_row - from_row), abs(to_col - from_col)
             if jump in [(1,2), (2,1)]:
                 valid = True    
             else:
                 print("Invalid Knight move")
+
         case PieceType.BISHOP:
             direction_x = to_col - from_col
             direction_y = to_row - from_row
@@ -126,6 +129,7 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
                 valid = True
             else:
                 print("Invalid Bishop move.")
+
         case PieceType.ROOK:
             direction_x = to_col - from_col
             direction_y = to_row - from_row

@@ -8,9 +8,13 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include "../inc/netcomm.h"
+#include "../inc/packet.h"
 #include "../inc/server.h"
 
 volatile sig_atomic_t keep_running = 0;
+
+int receive_packet(int client_sock, p_header_t *header, uint8_t **dest);
 
 void ctrlc_handler(int dummy)
 {
@@ -36,7 +40,52 @@ int signal_handler_setup()
 int handle_client(int client_sock)
 {
     // meat of the game
+    p_header_t header;
+    ssize_t bytes = recv_expected(client_sock, sizeof(p_header_t), (uint8_t *)&header, sizeof(p_header_t));
 
+    printf("Packet Received.\n");
+    if (0 > bytes)
+    {
+        perror("Receive Failed\n");
+        return -1;
+    }
+
+    printf("Recvd Packet Type: %d\n", header.msg_type);
+    printf("Recvd Packet Len: %d\n", htonl(header.p_len));
+
+    uint8_t *data = recv_expected_alloc(client_sock, htonl(header.p_len));
+
+    if (NULL == data)
+    {
+        perror("Malloc Failed");
+        return -1;
+    }
+
+    printf("Received header: %s\n", getPacketType(header.msg_type));
+
+    while (-1 != keep_running)
+    {
+        printf("Switching on packet type: %d\n", header.msg_type);
+        int packet_type = header.msg_type;
+
+        switch (packet_type)
+        {
+        case P_CONNECT:
+            printf("Connection Request Received!\n");
+            p_connection_t c_pack;
+            memcpy(&c_pack.port, data, sizeof(c_pack.port));
+            memcpy(&c_pack.username_len, data + sizeof(c_pack.port), sizeof(c_pack.username_len));
+            memcpy(&c_pack.user_name, data + sizeof(c_pack.port) + sizeof(c_pack.username_len), ntohl(c_pack.username_len));
+
+            printf("Port Received: %d\n", ntohl(c_pack.port));
+            printf("Username Received: %s\n", c_pack.user_name);
+            // free(data);
+            break;
+        default:
+            printf("Invalid Packet Type Received\n");
+            break;
+        }
+    }
     return 0;
 }
 

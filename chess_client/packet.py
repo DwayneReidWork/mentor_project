@@ -20,13 +20,16 @@ class Packet:
         return struct.pack('!BI', self.packet_type, self.packet_size())
     
 class Connect(Packet):
-    def __init__(self, port: int):
+    def __init__(self, port: int, username: str):
         super().__init__(PacketType.CONNECT)
         self.port = port
+        self.username = username
 
     def packet_size(self):
-        return struct.calcsize('!i')
+        username_bytes = self.username.encode('utf-8')
+        return struct.calcsize('!ii') + len(username_bytes)
 
     def pack(self) -> bytes:
+        username_bytes = self.username.encode('utf-8')
         # Format: Network(Big-endian + Single Byte)
-        return super().pack() + struct.pack('!i', self.port)
+        return super().pack() + struct.pack('!ii', self.port, len(username_bytes)) + username_bytes

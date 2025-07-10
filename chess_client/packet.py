@@ -3,6 +3,8 @@ import struct
 
 class PacketType(IntEnum):
     CONNECT = 1
+    MOVE = auto()
+    NEW_GAME = auto() # Connect will also start new game but this one wont need to send over username
 
 class Packet:
     def __init__(self, p_type: PacketType):
@@ -20,16 +22,30 @@ class Packet:
         return struct.pack('!BI', self.packet_type, self.packet_size())
     
 class Connect(Packet):
-    def __init__(self, port: int, username: str):
+    def __init__(self, username: str):
         super().__init__(PacketType.CONNECT)
-        self.port = port
         self.username = username
 
     def packet_size(self):
         username_bytes = self.username.encode('utf-8')
-        return struct.calcsize('!ii') + len(username_bytes)
+        return struct.calcsize('!i') + len(username_bytes)
 
     def pack(self) -> bytes:
         username_bytes = self.username.encode('utf-8')
         # Format: Network(Big-endian + Single Byte)
-        return super().pack() + struct.pack('!ii', self.port, len(username_bytes)) + username_bytes
+        return super().pack() + struct.pack('!i', len(username_bytes)) + username_bytes
+
+class Move(Packet):
+    def __init__(self, start_square, end_square):
+        super().__init__(PacketType.MOVE)
+        self.start_square = start_square
+        self.end_square = end_square
+
+    def packet_size(self):
+        move_bytes = self.start_square.encode('utf-8') + b" " + self.end_square.encode('utf-8')
+        return len(move_bytes)
+
+    def pack(self) -> bytes:
+        move_bytes = self.start_square.encode('utf-8') + b" " + self.end_square.encode('utf-8')
+        # Format: Network(Big-endian + Single Byte)
+        return super().pack() + move_bytes

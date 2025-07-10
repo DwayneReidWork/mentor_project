@@ -4,7 +4,7 @@
 #include "../inc/packet.h"
 #include "../inc/server.h"
 
-const char *getPacketType(PacketType packet)
+char *getPacketType(PacketType packet)
 {
     switch (packet)
     {
@@ -12,8 +12,6 @@ const char *getPacketType(PacketType packet)
         return "Connect";
     case P_MOVE:
         return "Move";
-    case P_BOARD_STATE:
-        return "Board State";
     default:
         // Handle cases where the number doesn't match an enum value
         return "Invalid Packet Type";

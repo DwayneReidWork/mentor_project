@@ -1,7 +1,10 @@
+#include <poll.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/socket.h>
+
+#include "../inc/server.h"
 
 // Function to send all data, returns total bits on success, -1 on failure
 int send_all(int sock, const uint8_t *data, size_t data_len)
@@ -22,17 +25,53 @@ int send_all(int sock, const uint8_t *data, size_t data_len)
 // Function to receive expected data, returns a pointer to the received data buffer
 int recv_expected(int sock, size_t expected_len, uint8_t *dest, size_t dest_size)
 {
+    struct pollfd pfds =
+        {.fd = sock,
+         .events = POLLIN};
+
     if (NULL == dest)
     {
         perror("Destination void");
         return -1;
     }
 
+    int status = 0;
     size_t recvd_len = 0;
     while (recvd_len < expected_len && recvd_len < dest_size)
     {
+        status = poll(&pfds, 1, 500);
+        if (-1 == status)
+        {
+            perror("Poll Error");
+            return -1;
+        }
+        else if (0 == status)
+        {
+            if (1 != keep_running)
+            {
+                return -1;
+            }
+            continue;
+        }
+
+        printf("r.events: %d\n", pfds.revents);
+
+        if (keep_running == 0 && pfds.revents != 0)
+        {
+            uint8_t buff = 0;
+            while (1)
+            {
+                if (recv(sock, &buff, 1, 0) <= 0)
+                {
+                    return -2;
+                }
+                printf("%x\n", buff);
+            }
+            return -1;
+        }
+
         ssize_t received = recv(sock, dest + recvd_len, expected_len - recvd_len, 0);
-        if (-1 == received)
+        if (1 > received)
         {
             return -1;
         }

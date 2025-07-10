@@ -1,30 +1,53 @@
+#include <limits.h>
 #include <stdint.h>
+#include <stdio.h>
 #include "../inc/game.h"
-// later...
 
-uint8_t piece = BLACK | BISHOP;
-// test side
+uint8_t board[8][8];
 
-int some_func()
+void print_piece_bits(uint8_t piece)
 {
-    if ((piece & WHITE) == WHITE)
+    // Determine the number of bits in the unsigned int type
+    int num_bits = sizeof(uint8_t) * CHAR_BIT;
+
+    for (int i = num_bits - 1; i >= 0; i--)
     {
-        // is white piece
-        return 0;
+        // Create a mask with a '1' at the current bit position
+        // and '0's elsewhere.
+        unsigned int mask = 1U << i;
+
+        // Use bitwise AND to check if the bit at the current position is set.
+        // If (num & mask) is non-zero, the bit is 1; otherwise, it's 0.
+        printf("%d", (piece & mask) ? 1 : 0);
     }
-    else
-    {
-        // is black piece? technically can't assume the black bit is set
-        return 0;
-    }
-    if ((piece & NOCOLOR) == BISHOP)
-    {
-        // any bishop
-        return 0;
-    }
-    if ((piece & (WHITE | PAWN)) == (WHITE | PAWN))
-    {
-        // specifically a white pawn
-        return 0;
-    }
+    printf("\n");
 }
+
+// // later...
+
+// uint8_t piece = BLACK | BISHOP;
+// // test side
+
+// int some_func()
+// {
+//     if ((piece & WHITE) == WHITE)
+//     {
+//         // is white piece
+//         return 0;
+//     }
+//     else
+//     {
+//         // is black piece? technically can't assume the black bit is set
+//         return 0;
+//     }
+//     if ((piece & NOCOLOR) == BISHOP)
+//     {
+//         // any bishop
+//         return 0;
+//     }
+//     if ((piece & (WHITE | PAWN)) == (WHITE | PAWN))
+//     {
+//         // specifically a white pawn
+//         return 0;
+//     }
+// }

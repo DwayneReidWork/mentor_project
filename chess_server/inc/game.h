@@ -1,6 +1,9 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
+
+void print_piece_bits(uint8_t piece);
 
 // Make the highest bits represent black or white
 #define WHITE 0b10000000
@@ -14,3 +17,11 @@
 #define ROOK 1 << 3   // 0b00001000
 #define QUEEN 1 << 4  // 0b00010000
 #define KING 1 << 5   // 0b00100000
+
+typedef struct
+{
+    char player_name[50];
+    int turn;
+    bool game_over;
+    uint8_t board_state[8][8];
+} game_state;

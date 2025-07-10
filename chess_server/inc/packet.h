@@ -9,10 +9,9 @@ typedef enum __attribute__((__packed__))
 {
     P_CONNECT = 1, // Eventually Login/Register
     P_MOVE,
-    P_BOARD_STATE,
 } PacketType;
 
-const char *getPacketType(PacketType packet);
+char *getPacketType(PacketType packet);
 
 // Packet Type (Header for All)
 typedef struct __attribute__((__packed__))
@@ -25,7 +24,7 @@ typedef struct __attribute__((__packed__))
 typedef struct __attribute__((__packed__))
 {
     p_header_t header;
-    uint32_t port;
+    // uint32_t port;
     uint32_t username_len;
     char user_name[MAX_USERNAME_LEN];
 } p_connection_t;
@@ -33,13 +32,6 @@ typedef struct __attribute__((__packed__))
 typedef struct __attribute__((__packed__))
 {
     p_header_t header;
-    uint8_t board_state[8][8];
-} p_board_state_t;
-
-typedef struct __attribute__((__packed__))
-{
-    // msg_tpe is specific type of PacketType
-    p_header_t header;
-    uint8_t board_state[8][8];
-    uint8_t move;
+    char from_square[3];
+    char to_square[3];
 } p_move_t;

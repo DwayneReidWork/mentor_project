@@ -12,7 +12,7 @@
 #include "../inc/packet.h"
 #include "../inc/server.h"
 
-volatile sig_atomic_t keep_running = 0;
+volatile sig_atomic_t keep_running = 1;
 
 int receive_packet(int client_sock, p_header_t *header, uint8_t **dest);
 
@@ -20,7 +20,7 @@ void ctrlc_handler(int dummy)
 {
     const char *error_message = "\nCTRL+C signal received.\n";
     write(STDERR_FILENO, error_message, strlen(error_message));
-    keep_running = -1;
+    keep_running = 0;
 }
 
 int signal_handler_setup()
@@ -61,30 +61,35 @@ int handle_client(int client_sock)
         return -1;
     }
 
-    printf("Received header: %s\n", getPacketType(header.msg_type));
+    printf("Received header: %s\nMsg Type: %d\n", getPacketType(header.msg_type), header.msg_type);
 
-    while (-1 != keep_running)
+    int packet_type = header.msg_type;
+
+    switch (packet_type)
     {
-        printf("Switching on packet type: %d\n", header.msg_type);
-        int packet_type = header.msg_type;
-
-        switch (packet_type)
+    case P_CONNECT:
+        printf("Connection Request Received!\n");
+        p_connection_t c_pack;
+        memcpy(&c_pack.username_len, data, sizeof(c_pack.username_len));
+        c_pack.username_len = htonl(c_pack.username_len);
+        if (c_pack.username_len > MAX_USERNAME_LEN - 1)
         {
-        case P_CONNECT:
-            printf("Connection Request Received!\n");
-            p_connection_t c_pack;
-            memcpy(&c_pack.port, data, sizeof(c_pack.port));
-            memcpy(&c_pack.username_len, data + sizeof(c_pack.port), sizeof(c_pack.username_len));
-            memcpy(&c_pack.user_name, data + sizeof(c_pack.port) + sizeof(c_pack.username_len), ntohl(c_pack.username_len));
-
-            printf("Port Received: %d\n", ntohl(c_pack.port));
-            printf("Username Received: %s\n", c_pack.user_name);
-            // free(data);
-            break;
-        default:
-            printf("Invalid Packet Type Received\n");
-            break;
+            c_pack.username_len = MAX_USERNAME_LEN - 1;
         }
+        memcpy(&c_pack.user_name, data + sizeof(c_pack.username_len), c_pack.username_len);
+        c_pack.user_name[c_pack.username_len] = '\0';
+        printf("Username Received: %s\n", c_pack.user_name);
+        break;
+    case P_MOVE:
+        printf("Move Request Received!\n");
+        p_move_t mv_pak;
+        memcpy(&mv_pak.from_square, data, 2);
+        memcpy(&mv_pak.to_square, data + 3, 2);
+        printf("Received move from %.2s to %.2s.\n", mv_pak.from_square, mv_pak.to_square);
+        break;
+    default:
+        printf("Invalid Packet Type Received\n");
+        break;
     }
     return 0;
 }
@@ -153,9 +158,13 @@ int server_setup(int port)
 
     printf("Connection Recieved from %s:%s\n", host_buff, port_buff);
 
-    if (0 > handle_client(new_socket))
+    while (0 != keep_running)
     {
-        perror("Error Handling Client");
+        if (0 > handle_client(new_socket))
+        {
+            perror("Error Handling Client");
+            break;
+        }
     }
 
     printf("\nShutting down server...\n");

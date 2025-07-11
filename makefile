@@ -3,9 +3,9 @@ CC = gcc --std gnu99 -D_GNU_SOURCE
 CFLAGS = -Wall -g -I ./inc
 
 # Source and header files
-SRCS = chess_server/src/main.c chess_server/src/game.c chess_server/src/server.c chess_server/src/packet.c chess_server/src/netcomm.c
+SRCS = chess_server/src/main.c chess_server/src/server.c chess_server/src/packet.c chess_server/src/netcomm.c chess_server/src/game_pieces.c chess_server/src/game_mechanics.c
 
-HDRS = chess_server/inc/game.h chess_server/inc/server.h chess_server/inc/packet.h chess_server/inc/netcomm.h
+HDRS = chess_server/inc/server.h chess_server/inc/packet.h chess_server/inc/netcomm.h chess_server/inc/game_pieces.h chess_server/inc/game_mechanics.h
 
 # Object files
 OBJS = $(SRCS:.c=.o)

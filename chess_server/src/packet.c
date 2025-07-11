@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <wchar.h>
 
+#include "../inc/game_pieces.h"
 #include "../inc/netcomm.h"
 #include "../inc/packet.h"
 #include "../inc/server.h"
@@ -8,7 +9,6 @@
 typedef struct
 {
     Pieces piece;
-    /// @brief use wprintf to view unicode with specifier %lc
     char *unicode;
 } p_unicode_t;
 

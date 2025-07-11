@@ -9,13 +9,13 @@
 #include <unistd.h>
 #include <wchar.h>
 
+#include "../inc/game_mechanics.h"
+#include "../inc/game_pieces.h"
 #include "../inc/netcomm.h"
 #include "../inc/packet.h"
 #include "../inc/server.h"
 
 volatile sig_atomic_t keep_running = 1;
-
-// int receive_packet(int client_sock, p_header_t *header, uint8_t **dest);
 
 void ctrlc_handler(int dummy)
 {
@@ -173,11 +173,8 @@ int server_setup(int port)
         }
     }
 
-    wprintf(L"White pawn print test: %lc\n", piece_unicode_lookup(WHITE_PAWN));
-
     printf("\nShutting down server...\n");
     close(new_socket);
     close(server_fd);
-
     return 0;
 }

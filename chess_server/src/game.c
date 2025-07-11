@@ -1,6 +1,8 @@
 #include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <string.h>
+
 #include "../inc/game.h"
 
 uint8_t board[8][8];
@@ -23,6 +25,37 @@ void print_piece_bits(uint8_t piece)
     printf("\n");
 }
 
+int uinput_to_row_col(char *square, int *row, int *col)
+{
+    int _row, _col;
+    printf("Square: %s\n", square);
+
+    if (strlen(square) != 2)
+    {
+        perror("Invalid square.\n");
+        return -1;
+    }
+
+    _row = square[1] - '0';
+    printf("_row: %d\n", _row);
+    if (_row < 0 || _row > 8)
+    {
+        printf("Invalid Row.");
+        return -1;
+    }
+    *row = _row;
+
+    _col = square[0] - '`';
+    printf("_col: %d\n", _col);
+    if (_col < 0 || _col > 8)
+    {
+        printf("Invalid Col.");
+        return -1;
+    }
+    *col = _col;
+
+    return 0;
+}
 // // later...
 
 // uint8_t piece = BLACK | BISHOP;

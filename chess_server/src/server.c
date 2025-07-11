@@ -7,6 +7,7 @@
 #include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <wchar.h>
 
 #include "../inc/netcomm.h"
 #include "../inc/packet.h"
@@ -14,7 +15,7 @@
 
 volatile sig_atomic_t keep_running = 1;
 
-int receive_packet(int client_sock, p_header_t *header, uint8_t **dest);
+// int receive_packet(int client_sock, p_header_t *header, uint8_t **dest);
 
 void ctrlc_handler(int dummy)
 {
@@ -86,6 +87,11 @@ int handle_client(int client_sock)
         memcpy(&mv_pak.from_square, data, 2);
         memcpy(&mv_pak.to_square, data + 3, 2);
         printf("Received move from %.2s to %.2s.\n", mv_pak.from_square, mv_pak.to_square);
+        int row, col;
+        uinput_to_row_col(mv_pak.from_square, &row, &col);
+        printf("From Square\nRow: %d, Column: %d\n", row, col);
+        uinput_to_row_col(mv_pak.to_square, &row, &col);
+        printf("To square\nRow: %d, Column: %d\n", row, col);
         break;
     default:
         printf("Invalid Packet Type Received\n");
@@ -166,6 +172,8 @@ int server_setup(int port)
             break;
         }
     }
+
+    wprintf(L"White pawn print test: %lc\n", piece_unicode_lookup(WHITE_PAWN));
 
     printf("\nShutting down server...\n");
     close(new_socket);

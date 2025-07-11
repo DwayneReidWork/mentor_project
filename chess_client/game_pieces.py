@@ -34,6 +34,9 @@ PIECE_UNICODE = {
     PieceType.EMPTY: '.', #'\u25A1' <- unicode for white square
 }
 
+for x in PIECE_UNICODE.values():
+    print(x.encode())
+
 class Board:
     def __init__(self):
         # 8x8 grid all EMPTY

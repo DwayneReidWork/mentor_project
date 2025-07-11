@@ -2,7 +2,7 @@ from enum import IntEnum, auto
 import struct
 
 class PacketType(IntEnum):
-    CONNECT = 1
+    CONNECT = 1 
     MOVE = auto()
     NEW_GAME = auto() # Connect will also start new game but this one wont need to send over username
 

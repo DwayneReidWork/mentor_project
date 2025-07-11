@@ -1,7 +1,11 @@
+#include <locale.h>
 #include <stdlib.h>
+#include <stdio.h>
+#include <wchar.h>
 
 #include "../inc/game.h"
 #include "../inc/server.h"
+#include "../inc/packet.h"
 
 int main(int argc, char *argv[])
 {

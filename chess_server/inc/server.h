@@ -12,3 +12,4 @@ extern volatile sig_atomic_t keep_running;
 
 int server_setup(int port);
 int handle_client(int client_sock);
+void uinput_to_row_col(char *square, int *row, int *col);

@@ -89,7 +89,7 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
                     valid = False
             # Diagonal capture
             elif row_diff == direction and abs(col_diff) == 1:
-                if (target & PieceType.NOCOLOR != PieceType.EMPTY and
+                if (target != PieceType.EMPTY and
                     (target & PieceType.COLOR_MASK) != (piece & PieceType.COLOR_MASK)):
                     valid = True
                 else:

@@ -54,22 +54,6 @@ int recv_expected(int sock, size_t expected_len, uint8_t *dest, size_t dest_size
             continue;
         }
 
-        printf("r.events: %d\n", pfds.revents);
-
-        if (keep_running == 0 && pfds.revents != 0)
-        {
-            uint8_t buff = 0;
-            while (1)
-            {
-                if (recv(sock, &buff, 1, 0) <= 0)
-                {
-                    return -2;
-                }
-                printf("%x\n", buff);
-            }
-            return -1;
-        }
-
         ssize_t received = recv(sock, dest + recvd_len, expected_len - recvd_len, 0);
         if (1 > received)
         {

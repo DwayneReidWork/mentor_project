@@ -2,6 +2,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+#include "../inc/packet.h"
+
+int display_board();
+int new_game_board();
+
 typedef enum
 {
     EMPTY = 0,
@@ -42,16 +47,10 @@ typedef struct
     bool right_castle_open;
 } game_t;
 
-// EMPTY_SQUARE = 0x20,
-//     WHITE_KING = 0x2654,
-//     WHITE_QUEEN = 0x2655,
-//     WHITE_ROOK = 0x2656,
-//     WHITE_BISHOP = 0x2657,
-//     WHITE_KNIGHT = 0x2658,
-//     WHITE_PAWN = 0x2659,
-//     BLACK_KING = 0x265A,
-//     BLACK_QUEEN = 0x265B,
-//     BLACK_ROOK = 0x265C,
-//     BLACK_BISHOP = 0x265D,
-//     BLACK_KNIGHT = 0x265E,
-//     BLACK_PAWN = 0x265F
+typedef struct
+{
+    Pieces piece;
+    char *unicode;
+} p_unicode_t;
+
+extern game_t *game;

@@ -1,7 +1,29 @@
 #include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+
+#include "../inc/game_mechanics.h"
+
+int run_game()
+{
+    // game stuff
+    game = malloc(sizeof(game_t));
+    if (NULL == game)
+    {
+        perror("Failed to allocate memory for game\n");
+        return 1;
+    }
+
+    memset(game, 0, sizeof(game_t));
+
+    new_game_board();
+    display_board();
+
+    free(game);
+    return 0;
+}
 
 void print_piece_bits(uint8_t piece)
 {

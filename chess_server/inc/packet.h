@@ -4,6 +4,8 @@
 #include <stdbool.h>
 #include <sys/types.h>
 
+#include "../inc/game_pieces.h"
+
 #define MAX_USERNAME_LEN 128
 
 typedef enum __attribute__((__packed__))

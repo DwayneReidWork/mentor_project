@@ -6,28 +6,6 @@
 #include "../inc/packet.h"
 #include "../inc/server.h"
 
-typedef struct
-{
-    Pieces piece;
-    char *unicode;
-} p_unicode_t;
-
-p_unicode_t piece_lookup[] = {
-    {.piece = EMPTY, .unicode = "."},
-    {.piece = BLACK_PAWN, .unicode = "\xe2\x99\x9f"},
-    {.piece = BLACK_KNIGHT, .unicode = "\xe2\x99\x9e"},
-    {.piece = BLACK_BISHOP, .unicode = "\xe2\x99\x9d"},
-    {.piece = BLACK_ROOK, .unicode = "\xe2\x99\x9c"},
-    {.piece = BLACK_QUEEN, .unicode = "\xe2\x99\x9b"},
-    {.piece = BLACK_KING, .unicode = "\xe2\x99\x9a"},
-    {.piece = WHITE_PAWN, .unicode = "\xe2\x99\x99"},
-    {.piece = WHITE_KNIGHT, .unicode = "\xe2\x99\x98"},
-    {.piece = WHITE_BISHOP, .unicode = "\xe2\x99\x97"},
-    {.piece = WHITE_ROOK, .unicode = "\xe2\x99\x96"},
-    {.piece = WHITE_QUEEN, .unicode = "\xe2\x99\x95"},
-    {.piece = WHITE_KING, .unicode = "\xe2\x99\x94"},
-};
-
 char *getPacketType(PacketType packet)
 {
     switch (packet)
@@ -79,22 +57,4 @@ int receive_packet(int client_sock, p_header_t *header, uint8_t **dest)
     }
 
     return header->msg_type;
-}
-
-/// @brief Lookup function for unicode of given chess piece
-/// @param piece
-/// @return unicode of chess piece or ? on err
-char *piece_unicode_lookup(Pieces piece)
-{
-    size_t list_size = sizeof(piece_lookup) / sizeof(piece_lookup[0]);
-    p_unicode_t *pieceptr;
-
-    for (int x = 0; x < list_size; x++)
-    {
-        pieceptr = piece_lookup + x;
-        printf("%s\n", pieceptr->unicode);
-        if (pieceptr->piece == piece)
-            return pieceptr->unicode;
-    }
-    return "?";
 }

@@ -1,10 +1,11 @@
 #include <locale.h>
+
 #include <stdlib.h>
-#include <stdio.h>
+#include <string.h>
 #include <wchar.h>
 
+#include "../inc/game_mechanics.h"
 #include "../inc/server.h"
-#include "../inc/packet.h"
 
 int main(int argc, char *argv[])
 {
@@ -14,7 +15,9 @@ int main(int argc, char *argv[])
         // atoi converts string to int
         port = atoi(argv[1]);
     }
-
     server_setup(port);
+
+    run_game();
+
     return 0;
 }

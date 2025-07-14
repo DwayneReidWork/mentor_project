@@ -15,7 +15,8 @@
         "packet.h": "c",
         "wait.h": "c",
         "netcomm.h": "c",
-        "game_pieces.h": "c"
+        "game_pieces.h": "c",
+        "string.h": "c"
     },
     "C_Cpp.default.cStandard": "c99",
     "C_Cpp.default.cppStandard": "gnu++17"

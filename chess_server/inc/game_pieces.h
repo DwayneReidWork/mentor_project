@@ -51,6 +51,9 @@ typedef struct
 {
     Pieces piece;
     char *unicode;
+    char *name;
 } p_unicode_t;
 
 extern game_t *game;
+char *piece_name_lookup(Pieces piece);
+char *piece_unicode_lookup(Pieces piece);

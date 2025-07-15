@@ -1,38 +1,39 @@
 #include <stdio.h>
+#include <string.h>
 
 #include "../inc/game_pieces.h"
 #include "../inc/packet.h"
 
-game_t *game = NULL;
+game_t *game = {0};
 
 p_unicode_t piece_lookup[] = {
     {.piece = EMPTY, .unicode = "."},
-    {.piece = BLACK_PAWN, .unicode = "\xe2\x99\x9f"},
-    {.piece = BLACK_KNIGHT, .unicode = "\xe2\x99\x9e"},
-    {.piece = BLACK_BISHOP, .unicode = "\xe2\x99\x9d"},
-    {.piece = BLACK_ROOK, .unicode = "\xe2\x99\x9c"},
-    {.piece = BLACK_QUEEN, .unicode = "\xe2\x99\x9b"},
-    {.piece = BLACK_KING, .unicode = "\xe2\x99\x9a"},
-    {.piece = WHITE_PAWN, .unicode = "\xe2\x99\x99"},
-    {.piece = WHITE_KNIGHT, .unicode = "\xe2\x99\x98"},
-    {.piece = WHITE_BISHOP, .unicode = "\xe2\x99\x97"},
-    {.piece = WHITE_ROOK, .unicode = "\xe2\x99\x96"},
-    {.piece = WHITE_QUEEN, .unicode = "\xe2\x99\x95"},
-    {.piece = WHITE_KING, .unicode = "\xe2\x99\x94"},
+    {.piece = BLACK_PAWN, .unicode = "\xe2\x99\x9f", .name = "BLACK PAWN"},
+    {.piece = BLACK_KNIGHT, .unicode = "\xe2\x99\x9e", .name = "BLACK KNIGHT"},
+    {.piece = BLACK_BISHOP, .unicode = "\xe2\x99\x9d", .name = "BLACK BISHOP"},
+    {.piece = BLACK_ROOK, .unicode = "\xe2\x99\x9c", .name = "BLACK ROOK"},
+    {.piece = BLACK_QUEEN, .unicode = "\xe2\x99\x9b", .name = "BLACK QUEEN"},
+    {.piece = BLACK_KING, .unicode = "\xe2\x99\x9a", .name = "BLACK KING"},
+    {.piece = WHITE_PAWN, .unicode = "\xe2\x99\x99", .name = "WHITE PAWN"},
+    {.piece = WHITE_KNIGHT, .unicode = "\xe2\x99\x98", .name = "WHITE KNIGHT"},
+    {.piece = WHITE_BISHOP, .unicode = "\xe2\x99\x97", .name = "WHITE BISHOP"},
+    {.piece = WHITE_ROOK, .unicode = "\xe2\x99\x96", .name = "WHITE ROOK"},
+    {.piece = WHITE_QUEEN, .unicode = "\xe2\x99\x95", .name = "WHITE QUEEN"},
+    {.piece = WHITE_KING, .unicode = "\xe2\x99\x94", .name = "WHITE KING"},
 };
 
 int new_game_board()
 {
+    // Empty Board
     for (int r = 0; r < 8; r++)
         for (int c = 0; c < 8; c++)
             game->board[r][c] = EMPTY;
 
-    // Black Pieces
+    // Set Black Pieces
     for (int i = 0; i < 8; i++)
     {
         game->board[1][i] = BLACK_PAWN;
     }
-
     game->board[0][0] = BLACK_ROOK;
     game->board[0][7] = BLACK_ROOK;
     game->board[0][1] = BLACK_KNIGHT;
@@ -42,7 +43,7 @@ int new_game_board()
     game->board[0][3] = BLACK_KING;
     game->board[0][4] = BLACK_QUEEN;
 
-    // White
+    // Set White Pieces
     for (int j = 0; j < 8; j++)
     {
         game->board[6][j] = WHITE_PAWN;
@@ -72,6 +73,20 @@ char *piece_unicode_lookup(Pieces piece)
         pieceptr = piece_lookup + x;
         if (pieceptr->piece == piece)
             return pieceptr->unicode;
+    }
+    return "?";
+}
+
+char *piece_name_lookup(Pieces piece)
+{
+    size_t list_size = sizeof(piece_lookup) / sizeof(piece_lookup[0]);
+    p_unicode_t *pieceptr;
+
+    for (int x = 0; x < list_size; x++)
+    {
+        pieceptr = piece_lookup + x;
+        if (pieceptr->piece == piece)
+            return pieceptr->name;
     }
     return "?";
 }

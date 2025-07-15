@@ -30,7 +30,7 @@ class CmdController(cmd2.Cmd):
     @cmd2.with_argparser(port_parser)
     def do_connect(self, args):
         if self.sock is not None:
-            raise Exception('Already Connected.')
+            raise Exception('Self.Sock is not none. Potential connection error')
         connection = ("127.0.0.1", args.port)
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.sock.connect(connection)
@@ -50,9 +50,11 @@ class CmdController(cmd2.Cmd):
         if self.sock is None:
             raise Exception('Not Connected.')
         packet_obj = Move(args.from_square, args.to_square)
-    
-        print(packet_obj.packet_size())
-        print(packet_obj.pack())
+
+        # #shows packet size
+        # print(packet_obj.packet_size())
+        # #shows bytes
+        # print(packet_obj.pack())
 
         send_all(self.sock, packet_obj.pack())
         #original way to move board will be replaced with just rendering board state as sent back by server

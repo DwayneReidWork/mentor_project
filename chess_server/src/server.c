@@ -86,12 +86,18 @@ int handle_client(int client_sock)
         p_move_t mv_pak;
         memcpy(&mv_pak.from_square, data, 2);
         memcpy(&mv_pak.to_square, data + 3, 2);
+        mv_pak.from_square[2] = '\0';
+        mv_pak.to_square[2] = '\0';
         printf("Received move from %.2s to %.2s.\n", mv_pak.from_square, mv_pak.to_square);
-        int row, col;
-        uinput_to_row_col(mv_pak.from_square, &row, &col);
-        printf("From Square\nRow: %d, Column: %d\n", row, col);
-        uinput_to_row_col(mv_pak.to_square, &row, &col);
-        printf("To square\nRow: %d, Column: %d\n", row, col);
+        int start_row, start_col, end_row, end_col;
+        uinput_to_row_col(mv_pak.from_square, &start_row, &start_col);
+        Pieces piece = game->board[start_row][start_col];
+        printf("Piece: %s", piece_name_lookup(piece));
+        printf("From Square\nRow: %d, Column: %d\n", start_row, start_col);
+        uinput_to_row_col(mv_pak.to_square, &end_row, &end_col);
+        printf("To square\nRow: %d, Column: %d\n", end_row, end_col);
+        // check_valid_move(piece, start_row, start_col, end_row, end_col);
+        // printf("Check valid move result %d", check_valid_move(piece, start_row, start_col, end_row, end_col));
         break;
     default:
         printf("Invalid Packet Type Received\n");

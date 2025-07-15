@@ -80,6 +80,7 @@ int handle_client(int client_sock)
         memcpy(&c_pack.user_name, data + sizeof(c_pack.username_len), c_pack.username_len);
         c_pack.user_name[c_pack.username_len] = '\0';
         printf("Username Received: %s\n", c_pack.user_name);
+        run_game();
         break;
     case P_MOVE:
         printf("Move Request Received!\n");
@@ -92,12 +93,11 @@ int handle_client(int client_sock)
         int start_row, start_col, end_row, end_col;
         uinput_to_row_col(mv_pak.from_square, &start_row, &start_col);
         Pieces piece = game->board[start_row][start_col];
-        printf("Piece: %s", piece_name_lookup(piece));
+        printf("Piece: %s\n", piece_name_lookup(piece));
         printf("From Square\nRow: %d, Column: %d\n", start_row, start_col);
         uinput_to_row_col(mv_pak.to_square, &end_row, &end_col);
         printf("To square\nRow: %d, Column: %d\n", end_row, end_col);
-        // check_valid_move(piece, start_row, start_col, end_row, end_col);
-        // printf("Check valid move result %d", check_valid_move(piece, start_row, start_col, end_row, end_col));
+        check_valid_move(piece, start_row, start_col, end_row, end_col);
         break;
     default:
         printf("Invalid Packet Type Received\n");

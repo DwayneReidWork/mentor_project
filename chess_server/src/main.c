@@ -1,7 +1,5 @@
 #include <locale.h>
-#include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <wchar.h>
 
 #include "../inc/game_mechanics.h"
@@ -15,8 +13,7 @@ int main(int argc, char *argv[])
         // atoi converts string to int
         port = atoi(argv[1]);
     }
-    server_setup(port);
 
-    run_game();
+    server_setup(port);
     return 0;
 }

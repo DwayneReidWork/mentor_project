@@ -56,7 +56,7 @@ int uinput_to_row_col(char *square, int *row, int *col)
         return -1;
     }
 
-    _row = square[1] - '0';
+    _row = square[1] - '1';
     if (_row < 0 || _row > 8)
     {
         printf("Invalid Row.");
@@ -64,7 +64,7 @@ int uinput_to_row_col(char *square, int *row, int *col)
     }
     *row = _row;
 
-    _col = square[0] - '`';
+    _col = square[0] - 'a';
     if (_col < 0 || _col > 8)
     {
         printf("Invalid Col.");
@@ -82,7 +82,9 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
     {
     case PAWN:
         printf("Pawn\n");
-        int direction, home_row, intermediate_row, row_diff, col_diff, target;
+        int direction, home_row, intermediate_row, row_diff, col_diff;
+        Pieces target;
+
         if (piece & WHITE)
         {
             direction = -1;
@@ -100,13 +102,14 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
 
         if (row_diff == direction && col_diff == 0)
         {
-            if (target & (NOCOLOR == EMPTY))
+            if ((target & NOCOLOR) == EMPTY)
             {
                 valid_move = true;
+                break;
             }
             else
             {
-                printf("Blocked! Can't move forward to occupied square.");
+                printf("Blocked! Can't move forward to occupied square.\n");
                 valid_move = false;
             }
         }

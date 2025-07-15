@@ -4,7 +4,7 @@
 #include "../inc/game_pieces.h"
 #include "../inc/packet.h"
 
-game_t *game = {0};
+game_t *game = NULL;
 
 p_unicode_t piece_lookup[] = {
     {.piece = EMPTY, .unicode = "."},

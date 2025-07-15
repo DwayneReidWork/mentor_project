@@ -43,8 +43,8 @@ class CmdController(cmd2.Cmd):
         self.board.display()
 
     move_parser = cmd2.Cmd2ArgumentParser()
-    move_parser.add_argument('from_square', type=str, action='store', help='Please enter the grid square of the piece you would like to move. (a-h & 1-8)Ex: c2')
-    move_parser.add_argument('to_square', type=str, action='store', help='Please enter the destination grid square of the piece you would like to move. (a-h & 1-8)Ex: c4')
+    move_parser.add_argument('from_square', type=str, action='store', help='Please enter the grid square of the piece you would like to move and its destination (a-h & 1-8)Ex: c2 c3')
+    move_parser.add_argument('to_square', type=str, action='store', help='Please enter the grid square of the piece you would like to move and its destination (a-h & 1-8)Ex: c2 c3')
     @cmd2.with_argparser(move_parser)
     def do_move_piece(self, args):
         if self.sock is None:

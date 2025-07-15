@@ -84,12 +84,16 @@ int handle_client(int client_sock)
         break;
     case P_MOVE:
         printf("Move Request Received!\n");
+        // copy recieved data into move pack struct
         p_move_t mv_pak;
         memcpy(&mv_pak.from_square, data, 2);
         memcpy(&mv_pak.to_square, data + 3, 2);
         mv_pak.from_square[2] = '\0';
         mv_pak.to_square[2] = '\0';
+
         printf("Received move from %.2s to %.2s.\n", mv_pak.from_square, mv_pak.to_square);
+
+        // convert start and end squares to row/col
         int start_row, start_col, end_row, end_col;
         uinput_to_row_col(mv_pak.from_square, &start_row, &start_col);
         Pieces piece = game->board[start_row][start_col];
@@ -97,8 +101,33 @@ int handle_client(int client_sock)
         printf("From Square\nRow: %d, Column: %d\n", start_row, start_col);
         uinput_to_row_col(mv_pak.to_square, &end_row, &end_col);
         printf("To square\nRow: %d, Column: %d\n", end_row, end_col);
-        check_valid_move(piece, start_row, start_col, end_row, end_col);
+
+        if (check_valid_move(piece, start_row, start_col, end_row, end_col))
+        {
+            Pieces end_piece = game->board[end_row][end_col];
+
+            if ((end_piece == (Pieces)EMPTY) ||
+                ((piece & WHITE) && (end_piece & BLACK)) ||
+                ((piece & BLACK) && (end_piece & WHITE)))
+            {
+                // Move the piece
+                // move_piece(piece, start_row, start_col, end_row, end_col);
+
+                printf("Before move, piece at h8 (0,7): 0x%02X\n", game->board[0][7]);
+                move_piece(piece, start_row, start_col, end_row, end_col);
+                printf("After move, piece at h8 (0,7): 0x%02X\n", game->board[0][7]);
+
+                display_board();
+            }
+            else if ((end_piece == (Pieces)EMPTY) ||
+                     ((piece & WHITE) && (end_piece & WHITE)) ||
+                     ((piece & BLACK) && (end_piece & BLACK)))
+            {
+                printf("Space Occupied by same color piece. Invalid Move.\n");
+            }
+        }
         break;
+
     default:
         printf("Invalid Packet Type Received\n");
         break;

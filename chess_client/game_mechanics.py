@@ -59,7 +59,7 @@ def notation_to_index(square: str):
     row = 8 - int(rank)
     return (row, col)
 
-def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
+def check_valid_move(piece, start_row, start_col, end_row, end_col, board: Board):
     valid = False
     match piece & PieceType.NOCOLOR:
         case PieceType.PAWN:
@@ -67,10 +67,10 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
             direction = -1 if piece & PieceType.WHITE else 1
             #set home row for each color
             home_row = 6 if piece & PieceType.WHITE else 1
-            row_diff = to_row - from_row
-            col_diff = to_col - from_col
+            row_diff = end_row - start_row
+            col_diff = end_col - start_col
 
-            target = board.get_piece(to_row, to_col)
+            target = board.get_piece(end_row, end_col)
 
             if row_diff == direction and col_diff == 0:
                 if target & PieceType.NOCOLOR == PieceType.EMPTY:
@@ -79,11 +79,11 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
                     print("Blocked! Can't move forward to occupied square.")
                     valid = False
             # 2 square move from start
-            elif row_diff == 2 * direction and col_diff == 0 and from_row == home_row:
-                intermediate_row = from_row + direction
+            elif row_diff == 2 * direction and col_diff == 0 and start_row == home_row:
+                intermediate_row = start_row + direction
                 #PICKUP HERE FOR CONVERSION STOPPED TO TRANSFER OVER GET PIECE FUNCTION
                 #TODO
-                if (board.get_piece(intermediate_row, from_col) & PieceType.NOCOLOR == PieceType.EMPTY and
+                if (board.get_piece(intermediate_row, start_col) & PieceType.NOCOLOR == PieceType.EMPTY and
                     target & PieceType.NOCOLOR == PieceType.EMPTY):
                     valid = True
                 else:
@@ -102,15 +102,15 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
                 valid = False
 
         case PieceType.KNIGHT:
-            jump = abs(to_row - from_row), abs(to_col - from_col)
+            jump = abs(end_row - start_row), abs(end_col - start_col)
             if jump in [(1,2), (2,1)]:
                 valid = True    
             else:
                 print("Invalid Knight move")
 
         case PieceType.BISHOP:
-            direction_x = to_col - from_col
-            direction_y = to_row - from_row
+            direction_x = end_col - start_col
+            direction_y = end_row - start_row
 
             #for calculating left/right and up/down and if blocked
             if abs(direction_x) == abs(direction_y):
@@ -119,8 +119,8 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
 
                 # Check squares in diags excluding end
                 # the base move method will handle dealing with if the selected square is occupied by other piecde.
-                x, y = from_col + step_x, from_row + step_y
-                while x != to_col and y != to_row:
+                x, y = start_col + step_x, start_row + step_y
+                while x != end_col and y != end_row:
                     if board.get_piece(y, x) != PieceType.EMPTY:
                         print("Path is blocked!")
                         valid = False
@@ -133,8 +133,8 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
                 print("Invalid Bishop move.")
 
         case PieceType.ROOK:
-            direction_x = to_col - from_col
-            direction_y = to_row - from_row
+            direction_x = end_col - start_col
+            direction_y = end_row - start_row
             
             #check that we're only moving left/right or up/down
             if (direction_x == 0 and direction_y != 0) or (direction_x != 0 and direction_y == 0):
@@ -146,10 +146,10 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
                 if direction_y != 0:
                     step_y = 1 if direction_y > 0 else -1
 
-                x, y = from_col + step_x, from_row + step_y
+                x, y = start_col + step_x, start_row + step_y
 
                 #check for empty along path 
-                while (x != to_col or y != to_row):
+                while (x != end_col or y != end_row):
                     if board.get_piece(y, x) != PieceType.EMPTY:
                         print("Path is blocked!")
                         valid = False
@@ -162,8 +162,8 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
                 valid = False
 
         case PieceType.QUEEN:
-            direction_x = to_col - from_col
-            direction_y = to_row - from_row
+            direction_x = end_col - start_col
+            direction_y = end_row - start_row
 
             if (direction_x == 0 and direction_y != 0) or (direction_x != 0 and direction_y == 0):
                 step_x = 0
@@ -174,9 +174,9 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
                 if direction_y != 0:
                     step_y = 1 if direction_y > 0 else -1
 
-                x, y = from_col + step_x, from_row + step_y
+                x, y = start_col + step_x, start_row + step_y
 
-                while (x != to_col or y != to_row):
+                while (x != end_col or y != end_row):
                     if board.get_piece(y, x) != PieceType.EMPTY:
                         print("Path is blocked!")
                         valid = False
@@ -189,8 +189,8 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
                 step_x = 1 if direction_x > 0 else -1
                 step_y = 1 if direction_y > 0 else -1
 
-                x, y = from_col + step_x, from_row + step_y
-                while x != to_col and y != to_row:
+                x, y = start_col + step_x, start_row + step_y
+                while x != end_col and y != end_row:
                     if board.get_piece(y, x) != PieceType.EMPTY:
                         print("Path is blocked!")
                         valid = False
@@ -204,10 +204,10 @@ def check_valid_move(piece, from_row, from_col, to_row, to_col, board: Board):
                 valid = False
 
         case PieceType.KING:
-            direction_x = to_col - from_col
-            direction_y = to_row - from_row
+            direction_x = end_col - start_col
+            direction_y = end_row - start_row
 
-            move = abs(to_row - from_row), abs(to_col - from_col)
+            move = abs(end_row - start_row), abs(end_col - start_col)
             if move in [(0,1), (1,0), (1,1)]:
                 valid = True    
             else:

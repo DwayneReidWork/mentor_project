@@ -48,30 +48,28 @@ int print_piece_bits(uint8_t piece)
 
 int uinput_to_row_col(char *square, int *row, int *col)
 {
-    // Takes in a square and splits it into row and column and assignes the values to pointers
-    int _row, _col;
     if (strlen(square) != 2)
     {
-        perror("Invalid square.\n");
+        printf("Invalid square format: %s\n", square);
         return -1;
     }
 
-    _row = square[1] - '1';
-    if (_row < 0 || _row > 8)
+    char file = square[0];
+    char rank = square[1];
+
+    if (file < 'a' || file > 'h')
     {
-        printf("Invalid Row.");
+        printf("Invalid file (col): %c\n", file);
         return -1;
     }
-    *row = _row;
+    *col = file - 'a';
 
-    _col = square[0] - 'a';
-    if (_col < 0 || _col > 8)
+    if (rank < '1' || rank > '8')
     {
-        printf("Invalid Col.");
+        printf("Invalid rank (row): %c\n", rank);
         return -1;
     }
-    *col = _col;
-
+    *row = 8 - (rank - '0');
     return 0;
 }
 
@@ -83,7 +81,7 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
     case PAWN:
         printf("Pawn\n");
         int direction, home_row, intermediate_row, row_diff, col_diff;
-        Pieces target;
+        Pieces target, intermediate_target;
 
         if (piece & WHITE)
         {
@@ -116,7 +114,35 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
         else if (row_diff == 2 * direction && col_diff == 0 && start_row == home_row)
         {
             intermediate_row = start_row + direction;
-            printf("Intermediate row: %d", intermediate_row);
+            intermediate_target = game->board[intermediate_row][start_col];
+
+            if ((intermediate_target & NOCOLOR) == EMPTY && (target & NOCOLOR) == EMPTY)
+            {
+                valid_move = true;
+            }
+            else
+            {
+                printf("2 Step move blocked.\n");
+                valid_move = false;
+            }
+        }
+        else if (row_diff == direction && abs(col_diff) == 1)
+        {
+            if ((PieceType)target != EMPTY && ((target & COLOR_MASK) != (piece & COLOR_MASK)))
+            {
+                valid_move = true;
+                break;
+            }
+            else
+            {
+                printf("No enemy piece to capture diagonally.\n");
+                valid_move = false;
+            }
+        }
+        else
+        {
+            printf("Invalid Pawn Move.\n");
+            valid_move = false;
         }
         return valid_move;
 
@@ -143,5 +169,18 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
         printf("Unknown piece\n");
         break;
     }
+    return valid_move;
+}
+
+int move_piece(Pieces piece, int start_row, int start_col, int end_row, int end_col)
+{
+    if (start_row < 0 || start_row > 7 || start_col < 0 || start_col > 7 ||
+        end_row < 0 || end_row > 7 || end_col < 0 || end_col > 7)
+    {
+        printf("Attempting to move to invalid board position.\n");
+        return -1;
+    }
+    game->board[start_row][start_col] = EMPTY;
+    game->board[end_row][end_col] = piece;
     return 0;
 }

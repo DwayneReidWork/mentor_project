@@ -14,6 +14,8 @@ char *getPacketType(PacketType packet)
         return "Connect";
     case P_MOVE:
         return "Move";
+    case P_DISPLAY_BOARD:
+        return "Display Board";
     default:
         // Handle cases where the number doesn't match an enum value
         return "Invalid Packet Type";

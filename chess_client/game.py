@@ -1,12 +1,12 @@
 import cmd2
 import socket
 from .netcomm import send_all, recv_expected
-from .packet import Connect, Move
+from .packet import Connect, Move, Display_Board
 from .game_pieces import PieceType as PT, Board
 from .game_mechanics import move_piece
 #for debugging
 # from netcomm import send_all, recv_expected
-# from packet import Connect, Move
+# from packet import Connect, Move, Display_Board
 # from game_pieces import PieceType as PT, Board
 # from game_mechanics import move_piece
 
@@ -40,7 +40,9 @@ class CmdController(cmd2.Cmd):
     def do_display_board(self, args):
         if self.sock is None:
             raise Exception('Not Connected.')
-        self.board.display()
+        #self.board.display()
+        display_pack = Display_Board().pack()
+        send_all(self.sock, display_pack)
 
     move_parser = cmd2.Cmd2ArgumentParser()
     move_parser.add_argument('from_square', type=str, action='store', help='Please enter the grid square of the piece you would like to move and its destination (a-h & 1-8)Ex: c2 c3')

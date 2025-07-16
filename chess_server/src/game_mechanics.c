@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <limits.h>
 #include <stdbool.h>
 #include <stdint.h>
@@ -23,24 +24,23 @@ int run_game()
     new_game_board();
     display_board();
 
-    free(game);
+    // free(game);
     return 0;
 }
 
-int print_piece_bits(uint8_t piece)
+int print_piece_bits(Pieces piece)
 {
     // Determine the number of bits in the unsigned int type
-    int num_bits = sizeof(uint8_t) * CHAR_BIT;
+    int num_bits = sizeof(uint8_t) * 8;
 
     for (int i = num_bits - 1; i >= 0; i--)
     {
         // Create a mask with a '1' at the current bit position
         // and '0's elsewhere.
-        unsigned int mask = 1U << i;
-
         // Use bitwise AND to check if the bit at the current position is set.
         // If (num & mask) is non-zero, the bit is 1; otherwise, it's 0.
-        printf("%d", (piece & mask) ? 1 : 0);
+
+        printf("%d", (piece & (1 << i)) != 0);
     }
     printf("\n");
     return 0;
@@ -54,7 +54,7 @@ int uinput_to_row_col(char *square, int *row, int *col)
         return -1;
     }
 
-    char file = square[0];
+    char file = tolower(square[0]);
     char rank = square[1];
 
     if (file < 'a' || file > 'h')
@@ -79,17 +79,18 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
     switch (piece & NOCOLOR)
     {
     case PAWN:
-        printf("Pawn\n");
         int direction, home_row, intermediate_row, row_diff, col_diff;
         Pieces target, intermediate_target;
 
         if (piece & WHITE)
         {
+            printf("White Pawn\n");
             direction = -1;
             home_row = 6;
         }
         else
         {
+            printf("Black Pawn\n");
             direction = 1;
             home_row = 1;
         }
@@ -145,7 +146,6 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
             valid_move = false;
         }
         return valid_move;
-
         break;
     case KNIGHT:
         printf("Knight\n");

@@ -12,9 +12,8 @@ typedef enum __attribute__((__packed__))
 {
     P_CONNECT = 1, // Eventually Login/Register
     P_MOVE,
+    P_DISPLAY_BOARD,
 } PacketType;
-
-char *getPacketType(PacketType packet);
 
 // Packet Type (Header for All)
 typedef struct __attribute__((__packed__))
@@ -47,3 +46,5 @@ typedef struct
     bool game_over;
     uint8_t board_state[8][8];
 } game_state;
+
+char *getPacketType(PacketType packet);

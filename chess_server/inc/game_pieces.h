@@ -4,9 +4,6 @@
 
 #include "../inc/packet.h"
 
-int display_board();
-int new_game_board();
-
 typedef enum
 {
     EMPTY = 0,
@@ -57,3 +54,5 @@ typedef struct
 extern game_t *game;
 char *piece_name_lookup(Pieces piece);
 char *piece_unicode_lookup(Pieces piece);
+int display_board();
+int new_game_board();

@@ -1,4 +1,3 @@
-// #define _XOPEN_SOURCE 700
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <netinet/in.h>
@@ -51,6 +50,7 @@ int handle_client(int client_sock)
         return -1;
     }
 
+    printf("Received header: %s\n", getPacketType(header.msg_type));
     printf("Recvd Packet Type: %d\n", header.msg_type);
     printf("Recvd Packet Len: %d\n", htonl(header.p_len));
 
@@ -62,8 +62,6 @@ int handle_client(int client_sock)
         return -1;
     }
 
-    printf("Received header: %s\nMsg Type: %d\n", getPacketType(header.msg_type), header.msg_type);
-
     int packet_type = header.msg_type;
 
     switch (packet_type)
@@ -71,13 +69,16 @@ int handle_client(int client_sock)
     case P_CONNECT:
         printf("Connection Request Received!\n");
         p_connection_t c_pack;
+        // copy from data stream into struct
         memcpy(&c_pack.username_len, data, sizeof(c_pack.username_len));
         c_pack.username_len = htonl(c_pack.username_len);
+        // copy to length -1 for null term
         if (c_pack.username_len > MAX_USERNAME_LEN - 1)
         {
             c_pack.username_len = MAX_USERNAME_LEN - 1;
         }
         memcpy(&c_pack.user_name, data + sizeof(c_pack.username_len), c_pack.username_len);
+        // null term username
         c_pack.user_name[c_pack.username_len] = '\0';
         printf("Username Received: %s\n", c_pack.user_name);
         run_game();
@@ -88,6 +89,7 @@ int handle_client(int client_sock)
         p_move_t mv_pak;
         memcpy(&mv_pak.from_square, data, 2);
         memcpy(&mv_pak.to_square, data + 3, 2);
+        // null term moves
         mv_pak.from_square[2] = '\0';
         mv_pak.to_square[2] = '\0';
 
@@ -105,18 +107,13 @@ int handle_client(int client_sock)
         if (check_valid_move(piece, start_row, start_col, end_row, end_col))
         {
             Pieces end_piece = game->board[end_row][end_col];
-
+            // if space is empty or occupied by opposite color piece
             if ((end_piece == (Pieces)EMPTY) ||
                 ((piece & WHITE) && (end_piece & BLACK)) ||
                 ((piece & BLACK) && (end_piece & WHITE)))
             {
-                // Move the piece
-                // move_piece(piece, start_row, start_col, end_row, end_col);
-
-                printf("Before move, piece at h8 (0,7): 0x%02X\n", game->board[0][7]);
+                // move
                 move_piece(piece, start_row, start_col, end_row, end_col);
-                printf("After move, piece at h8 (0,7): 0x%02X\n", game->board[0][7]);
-
                 display_board();
             }
             else if ((end_piece == (Pieces)EMPTY) ||
@@ -127,7 +124,10 @@ int handle_client(int client_sock)
             }
         }
         break;
-
+    case P_DISPLAY_BOARD:
+        printf("Display board packet recieved\n");
+        display_board();
+        break;
     default:
         printf("Invalid Packet Type Received\n");
         break;

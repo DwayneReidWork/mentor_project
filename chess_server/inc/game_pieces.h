@@ -7,16 +7,15 @@
 typedef enum
 {
     EMPTY = 0,
-    PAWN = 1 << 1,
-    KNIGHT = 1 << 2,
-    BISHOP = 1 << 3,
-    ROOK = 1 << 4,
-    QUEEN = 1 << 5,
-    KING = 1 << 6,
-    WHITE = 1 << 7,
-    BLACK = 1 << 8,
+    PAWN = 1 << 0,
+    KNIGHT = 1 << 1,
+    BISHOP = 1 << 2,
+    ROOK = 1 << 3,
+    QUEEN = 1 << 4,
+    KING = 1 << 5,
+    WHITE = 1 << 6,
+    BLACK = 1 << 7,
     NOCOLOR = 0b00111111,
-    // added for attacks
     COLOR_MASK = WHITE | BLACK,
 } PieceType;
 

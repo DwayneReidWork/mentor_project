@@ -207,7 +207,7 @@ def check_valid_move(piece, start_row, start_col, end_row, end_col, board: Board
             direction_x = end_col - start_col
             direction_y = end_row - start_row
 
-            move = abs(end_row - start_row), abs(end_col - start_col)
+            move = abs(direction_x), abs(direction_y)
             if move in [(0,1), (1,0), (1,1)]:
                 valid = True    
             else:

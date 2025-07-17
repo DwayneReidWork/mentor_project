@@ -11,4 +11,6 @@
 extern volatile sig_atomic_t keep_running;
 
 int handle_client(int client_sock);
+int p_connect_method(uint8_t *data);
+int p_move_method(uint8_t *data);
 int server_setup(int port);

@@ -39,7 +39,6 @@ int signal_handler_setup()
 
 int handle_client(int client_sock)
 {
-    // meat of the game
     p_header_t header;
     ssize_t bytes = recv_expected(client_sock, sizeof(p_header_t), (uint8_t *)&header, sizeof(p_header_t));
 
@@ -62,67 +61,16 @@ int handle_client(int client_sock)
         return -1;
     }
 
+    // meat of the game
     int packet_type = header.msg_type;
 
     switch (packet_type)
     {
     case P_CONNECT:
-        printf("Connection Request Received!\n");
-        p_connection_t c_pack;
-        // copy from data stream into struct
-        memcpy(&c_pack.username_len, data, sizeof(c_pack.username_len));
-        c_pack.username_len = htonl(c_pack.username_len);
-        // copy to length -1 for null term
-        if (c_pack.username_len > MAX_USERNAME_LEN - 1)
-        {
-            c_pack.username_len = MAX_USERNAME_LEN - 1;
-        }
-        memcpy(&c_pack.user_name, data + sizeof(c_pack.username_len), c_pack.username_len);
-        // null term username
-        c_pack.user_name[c_pack.username_len] = '\0';
-        printf("Username Received: %s\n", c_pack.user_name);
-        run_game();
+        p_connect_method(data);
         break;
     case P_MOVE:
-        printf("Move Request Received!\n");
-        // copy recieved data into move pack struct
-        p_move_t mv_pak;
-        memcpy(&mv_pak.from_square, data, 2);
-        memcpy(&mv_pak.to_square, data + 3, 2);
-        // null term moves
-        mv_pak.from_square[2] = '\0';
-        mv_pak.to_square[2] = '\0';
-
-        printf("Received move from %.2s to %.2s.\n", mv_pak.from_square, mv_pak.to_square);
-
-        // convert start and end squares to row/col
-        int start_row, start_col, end_row, end_col;
-        uinput_to_row_col(mv_pak.from_square, &start_row, &start_col);
-        Pieces piece = game->board[start_row][start_col];
-        printf("Piece: %s\n", piece_name_lookup(piece));
-        printf("From Square\nRow: %d, Column: %d\n", start_row, start_col);
-        uinput_to_row_col(mv_pak.to_square, &end_row, &end_col);
-        printf("To square\nRow: %d, Column: %d\n", end_row, end_col);
-
-        if (check_valid_move(piece, start_row, start_col, end_row, end_col))
-        {
-            Pieces end_piece = game->board[end_row][end_col];
-            // if space is empty or occupied by opposite color piece
-            if ((end_piece == (Pieces)EMPTY) ||
-                ((piece & WHITE) && (end_piece & BLACK)) ||
-                ((piece & BLACK) && (end_piece & WHITE)))
-            {
-                // move
-                move_piece(piece, start_row, start_col, end_row, end_col);
-                display_board();
-            }
-            else if ((end_piece == (Pieces)EMPTY) ||
-                     ((piece & WHITE) && (end_piece & WHITE)) ||
-                     ((piece & BLACK) && (end_piece & BLACK)))
-            {
-                printf("Space Occupied by same color piece. Invalid Move.\n");
-            }
-        }
+        p_move_method(data);
         break;
     case P_DISPLAY_BOARD:
         printf("Display board packet recieved\n");
@@ -211,5 +159,69 @@ int server_setup(int port)
     printf("\nShutting down server...\n");
     close(new_socket);
     close(server_fd);
+    return 0;
+}
+
+int p_connect_method(uint8_t *data)
+{
+    printf("Connection Request Received!\n");
+    p_connection_t c_pack;
+    // copy from data stream into struct
+    memcpy(&c_pack.username_len, data, sizeof(c_pack.username_len));
+    c_pack.username_len = htonl(c_pack.username_len);
+    // copy to length -1 for null term
+    if (c_pack.username_len > MAX_USERNAME_LEN - 1)
+    {
+        c_pack.username_len = MAX_USERNAME_LEN - 1;
+    }
+    memcpy(&c_pack.user_name, data + sizeof(c_pack.username_len), c_pack.username_len);
+    // null term username
+    c_pack.user_name[c_pack.username_len] = '\0';
+    printf("Username Received: %s\n", c_pack.user_name);
+    run_game();
+
+    return 0;
+}
+
+int p_move_method(uint8_t *data)
+{
+    printf("Move Request Received!\n");
+    // copy recieved data into move pack struct
+    p_move_t mv_pak;
+    memcpy(&mv_pak.from_square, data, 2);
+    memcpy(&mv_pak.to_square, data + 3, 2);
+    // null term moves
+    mv_pak.from_square[2] = '\0';
+    mv_pak.to_square[2] = '\0';
+
+    printf("Received move from %.2s to %.2s.\n", mv_pak.from_square, mv_pak.to_square);
+
+    // convert start and end squares to row/col
+    int start_row, start_col, end_row, end_col;
+    uinput_to_row_col(mv_pak.from_square, &start_row, &start_col);
+    Pieces piece = game->board[start_row][start_col];
+    printf("From Square\nRow: %d, Column: %d\n", start_row, start_col);
+    uinput_to_row_col(mv_pak.to_square, &end_row, &end_col);
+    printf("To square\nRow: %d, Column: %d\n", end_row, end_col);
+
+    if (check_valid_move(piece, start_row, start_col, end_row, end_col))
+    {
+        Pieces end_piece = game->board[end_row][end_col];
+        // if space is empty or occupied by opposite color piece
+        if ((end_piece == (Pieces)EMPTY) ||
+            ((piece & WHITE) && (end_piece & BLACK)) ||
+            ((piece & BLACK) && (end_piece & WHITE)))
+        {
+            // move
+            move_piece(piece, start_row, start_col, end_row, end_col);
+        }
+        else if ((end_piece == (Pieces)EMPTY) ||
+                 ((piece & WHITE) && (end_piece & WHITE)) ||
+                 ((piece & BLACK) && (end_piece & BLACK)))
+        {
+            printf("Space Occupied by same color piece. Invalid Move.\n");
+        }
+    }
+    display_board();
     return 0;
 }

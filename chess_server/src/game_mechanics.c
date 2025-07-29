@@ -193,7 +193,7 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
         }
         else
         {
-            printf("Invalid Bishop Move");
+            printf("Invalid Bishop Move\n");
             valid_move = false;
         }
         break;
@@ -214,13 +214,18 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
         }
         else
         {
-            printf("Invalid King Move");
+            printf("Invalid King Move.\n");
             valid_move = false;
         }
         break;
     default:
         printf("Unknown piece\n");
         break;
+    }
+
+    if (valid_move == false)
+    {
+        printf("Invalid Move.\n");
     }
     return valid_move;
 }

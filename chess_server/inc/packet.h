@@ -39,6 +39,12 @@ typedef struct __attribute__((__packed__))
     uint8_t promotee;
 } p_move_t;
 
+typedef struct __attribute__((__packed__))
+{
+    p_header_t header;
+    Pieces board_state[8][8];
+} p_current_board_t;
+
 typedef struct
 {
     char player_name[50];

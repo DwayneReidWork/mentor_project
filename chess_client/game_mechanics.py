@@ -1,6 +1,14 @@
 import re
-#from game_pieces import PieceType, Board
 from .game_pieces import PieceType, Board
+#from game_pieces import PieceType, Board
+
+#Val is the integer containing piece type/color in bit flags
+def decode_piece(val: int) -> tuple[PieceType, PieceType]:
+    #zero out color bits to just get piece
+    piece_type = PieceType(val & PieceType.NOCOLOR)
+    #zero out everything but color bits for color
+    color = PieceType(val & PieceType.COLOR_MASK)
+    return piece_type, color
 
 def move_piece(board: Board):
     valid_squares = "^[a-hA-H][1-8]$"
@@ -81,8 +89,6 @@ def check_valid_move(piece, start_row, start_col, end_row, end_col, board: Board
             # 2 square move from start
             elif row_diff == 2 * direction and col_diff == 0 and start_row == home_row:
                 intermediate_row = start_row + direction
-                #PICKUP HERE FOR CONVERSION STOPPED TO TRANSFER OVER GET PIECE FUNCTION
-                #TODO
                 if (board.get_piece(intermediate_row, start_col) & PieceType.NOCOLOR == PieceType.EMPTY and
                     target & PieceType.NOCOLOR == PieceType.EMPTY):
                     valid = True

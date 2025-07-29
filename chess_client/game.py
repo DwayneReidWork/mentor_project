@@ -1,9 +1,10 @@
 import cmd2
 import socket
+import struct
 from .netcomm import send_all, recv_expected
 from .packet import Connect, Move, Display_Board
-from .game_pieces import PieceType as PT, Board
-from .game_mechanics import move_piece
+from .game_pieces import PieceType as PT, Board, PIECE_UNICODE
+from .game_mechanics import move_piece, decode_piece
 #for debugging
 # from netcomm import send_all, recv_expected
 # from packet import Connect, Move, Display_Board
@@ -36,13 +37,28 @@ class CmdController(cmd2.Cmd):
         self.sock.connect(connection)
         connection_packet = Connect(args.user_name).pack()
         send_all(self.sock, connection_packet)
-
+        
+    #TODO
     def do_display_board(self, args):
         if self.sock is None:
             raise Exception('Not Connected.')
         #self.board.display()
         display_pack = Display_Board().pack()
         send_all(self.sock, display_pack)
+        #Recv 256 + 5 for header
+        board_bytes = recv_expected(self.sock, 261)
+        print(f"Board Bytes: {board_bytes}")
+        #Break into Squares starting after header
+        values = struct.unpack('<64I', board_bytes[5:])
+        board = Board()
+        for i, val in enumerate(values):
+            row = (i // 8)
+            col = (i % 8)
+            ptype, color = decode_piece(val)
+            piece = ptype|color
+            #print(f"val={val}, ptype={ptype}, color={color}, combined={piece}")
+            board.set_piece(row, col, piece)
+        board.display()
 
     move_parser = cmd2.Cmd2ArgumentParser()
     move_parser.add_argument('from_square', type=str, action='store', help='Please enter the grid square of the piece you would like to move and its destination (a-h & 1-8)Ex: c2 c3')

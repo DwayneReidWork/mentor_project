@@ -74,6 +74,7 @@ int handle_client(int client_sock)
         break;
     case P_DISPLAY_BOARD:
         printf("Display board packet recieved\n");
+        p_display_board_method(client_sock, data);
         display_board();
         break;
     default:
@@ -223,5 +224,13 @@ int p_move_method(uint8_t *data)
         }
     }
     display_board();
+    return 0;
+}
+
+int p_display_board_method(int client_sock, uint8_t *data)
+{
+    p_current_board_t current_board;
+    memcpy(current_board.board_state, game->board, sizeof(game->board));
+    send_all(client_sock, (const uint8_t *)&current_board, sizeof(current_board));
     return 0;
 }

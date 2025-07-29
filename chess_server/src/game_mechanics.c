@@ -155,9 +155,23 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
             valid_move = false;
         }
         break;
+
     case KNIGHT:
         printf("Knight\n");
+        row_diff = abs(end_row - start_row);
+        col_diff = abs(end_col - start_col);
+
+        if ((row_diff == 1 && col_diff == 2) || (row_diff == 2 && col_diff == 1))
+        {
+            valid_move = true;
+        }
+        else
+        {
+            printf("Invalid Knight move\n");
+            valid_move = false;
+        }
         break;
+
     case BISHOP:
         printf("Bishop\n");
         dir_x = end_row - start_row;
@@ -197,12 +211,55 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
             valid_move = false;
         }
         break;
+
     case ROOK:
+        // TODO
         printf("Rook\n");
+        step_x = 0;
+        step_y = 0;
+        dir_x = end_col - start_col;
+        dir_y = end_row - start_row;
+
+        if ((dir_x == 0 && dir_y != 0) || (dir_x != 0 && dir_y == 0))
+        {
+            if (dir_x != 0)
+            {
+                step_x = (dir_x > 0) ? 1 : -1;
+            }
+            if (dir_y != 0)
+            {
+                step_y = (dir_y > 0) ? 1 : -1;
+            }
+
+            x = start_col + step_x;
+            y = start_row + step_y;
+
+            while (x != end_col || y != end_row)
+            {
+                if (game->board[y][x] != EMPTY)
+                {
+                    printf("Path is blocked!\n");
+                    valid_move = false;
+                }
+                else
+                {
+                    x += step_x;
+                    y += step_y;
+                }
+                valid_move = true;
+            }
+        }
+        else
+        {
+            printf("Invalid Rook move.\n");
+            valid_move = false;
+        }
         break;
+
     case QUEEN:
         printf("Queen\n");
         break;
+
     case KING:
         printf("King\n");
         // Currently only has logic for moving not castling

@@ -3,7 +3,7 @@ import socket
 import struct
 from .netcomm import send_all, recv_expected
 from .packet import Connect, Move, Display_Board
-from .game_pieces import PieceType as PT, Board, PIECE_UNICODE
+from .game_pieces import PieceType as PT, Board
 from .game_mechanics import move_piece, decode_piece
 #for debugging
 # from netcomm import send_all, recv_expected
@@ -16,6 +16,21 @@ def port_type(port_str: str) -> int:
     if port < 0 or port > 65535:
         raise ValueError(f"Port must be in the range [0-65535], have: {port}")
     return port
+
+def receive_and_print_board(self):
+    #Recv 256 + 5 for header
+    #8 by 8 board X 4 per square = 256
+    board_bytes = recv_expected(self.sock, 261)
+    #Break into Squares starting after header
+    values = struct.unpack('<64I', board_bytes[5:])
+    for i, val in enumerate(values):
+        row = (i // 8)
+        col = (i % 8)
+        ptype, color = decode_piece(val)
+        piece = ptype|color
+        self.board.set_piece(row, col, piece)
+    self.board.display()
+
 
 class CmdController(cmd2.Cmd):
     
@@ -38,27 +53,13 @@ class CmdController(cmd2.Cmd):
         connection_packet = Connect(args.user_name).pack()
         send_all(self.sock, connection_packet)
         
-    #TODO
     def do_display_board(self, args):
         if self.sock is None:
             raise Exception('Not Connected.')
-        #self.board.display()
         display_pack = Display_Board().pack()
         send_all(self.sock, display_pack)
-        #Recv 256 + 5 for header
-        board_bytes = recv_expected(self.sock, 261)
-        print(f"Board Bytes: {board_bytes}")
-        #Break into Squares starting after header
-        values = struct.unpack('<64I', board_bytes[5:])
-        board = Board()
-        for i, val in enumerate(values):
-            row = (i // 8)
-            col = (i % 8)
-            ptype, color = decode_piece(val)
-            piece = ptype|color
-            #print(f"val={val}, ptype={ptype}, color={color}, combined={piece}")
-            board.set_piece(row, col, piece)
-        board.display()
+        receive_and_print_board(self)
+        
 
     move_parser = cmd2.Cmd2ArgumentParser()
     move_parser.add_argument('from_square', type=str, action='store', help='Please enter the grid square of the piece you would like to move and its destination (a-h & 1-8)Ex: c2 c3')
@@ -68,15 +69,8 @@ class CmdController(cmd2.Cmd):
         if self.sock is None:
             raise Exception('Not Connected.')
         packet_obj = Move(args.from_square, args.to_square)
-
-        # #shows packet size
-        # print(packet_obj.packet_size())
-        # #shows bytes
-        # print(packet_obj.pack())
-
         send_all(self.sock, packet_obj.pack())
-        #original way to move board will be replaced with just rendering board state as sent back by server
-        #move_piece(self.board)
+        receive_and_print_board(self)
     
     def do_new_game(self, args):
         if self.sock is None:

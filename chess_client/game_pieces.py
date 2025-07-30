@@ -35,9 +35,10 @@ PIECE_UNICODE = {
 }
 
 class Board:
+    BOARD_SIZE = 8
     def __init__(self):
         # 8x8 grid all EMPTY
-        self.grid = [[PieceType.EMPTY for _ in range(8)] for _ in range(8)]
+        self.grid = [[PieceType.EMPTY for _ in range(self.BOARD_SIZE)] for _ in range(self.BOARD_SIZE)]
 
     #potentially will be move
     def set_piece(self, row, col, piece):
@@ -58,11 +59,11 @@ class Board:
         #os.system("clear")
         lines = []
         lines.append("    A   B   C   D   E   F   G   H")
-        horiz = "  +" + "---+" * 8
+        horiz = "  +" + "---+" * self.BOARD_SIZE
         lines.append(horiz)
-        for r in range(8):
-            row_pieces = [f" {PIECE_UNICODE[self.get_piece(r, c)]} " for c in range(8)]
-            lines.append(f"{8 - r} |" + "|".join(row_pieces) + f"| {8 - r}")
+        for r in range(self.BOARD_SIZE):
+            row_pieces = [f" {PIECE_UNICODE[self.get_piece(r, c)]} " for c in range(self.BOARD_SIZE)]
+            lines.append(f"{8 - r} |" + "|".join(row_pieces) + f"| {self.BOARD_SIZE - r}")
             lines.append(horiz)
         lines.append("    A   B   C   D   E   F   G   H")
         #Print for debug purposes
@@ -74,7 +75,7 @@ class Board:
     def new_board():
         board = Board()
         # White Pieces
-        board.set_pieces([(6, col) for col in range(8)], PieceType.WHITE | PieceType.PAWN)
+        board.set_pieces([(6, col) for col in range(Board.BOARD_SIZE)], PieceType.WHITE | PieceType.PAWN)
         board.set_pieces([(7, 0), (7, 7)], PieceType.WHITE | PieceType.ROOK)
         board.set_pieces([(7, 1), (7, 6)], PieceType.WHITE | PieceType.KNIGHT)
         board.set_pieces([(7, 2), (7, 5)], PieceType.WHITE | PieceType.BISHOP)
@@ -82,7 +83,7 @@ class Board:
         board.set_piece(7, 4, PieceType.WHITE | PieceType.KING)
 
         # Black Pieces
-        board.set_pieces([(1, col) for col in range(8)], PieceType.BLACK | PieceType.PAWN)
+        board.set_pieces([(1, col) for col in range(Board.BOARD_SIZE)], PieceType.BLACK | PieceType.PAWN)
         board.set_pieces([(0, 0), (0, 7)], PieceType.BLACK | PieceType.ROOK)
         board.set_pieces([(0, 1), (0, 6)], PieceType.BLACK | PieceType.KNIGHT)
         board.set_pieces([(0, 2), (0, 5)], PieceType.BLACK | PieceType.BISHOP)
@@ -103,9 +104,9 @@ class Board:
         lines.append("    A   B   C   D   E   F   G   H")
         horiz = "  +" + "---+" * 8
         lines.append(horiz)
-        for r in range(8):
-            row_pieces = [f" {PIECE_UNICODE[self.get_piece(r, c)]} " for c in range(8)]
-            lines.append(f"{8 - r} |" + "|".join(row_pieces) + f"| {8 - r}")
+        for r in range(self.BOARD_SIZE):
+            row_pieces = [f" {PIECE_UNICODE[self.get_piece(r, c)]} " for c in range(self.BOARD_SIZE)]
+            lines.append(f"{self.BOARD_SIZE - r} |" + "|".join(row_pieces) + f"| {self.BOARD_SIZE - r}")
             lines.append(horiz)
         lines.append("    A   B   C   D   E   F   G   H")
         return "\n".join(lines)

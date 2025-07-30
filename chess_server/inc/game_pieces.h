@@ -4,7 +4,9 @@
 
 // #include "../inc/packet.h"
 
-typedef enum
+#define BOARD_SIZE 8
+
+typedef enum __attribute__((__packed__))
 {
     EMPTY = 0,
     PAWN = 1 << 0,
@@ -37,7 +39,7 @@ typedef enum
 
 typedef struct
 {
-    PieceType board[8][8];
+    PieceType board[BOARD_SIZE][BOARD_SIZE];
     bool win;
     bool left_castle_open;
     bool right_castle_open;

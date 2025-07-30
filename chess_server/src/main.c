@@ -1,6 +1,4 @@
-#include <locale.h>
 #include <stdlib.h>
-#include <wchar.h>
 
 #include "../inc/game_mechanics.h"
 #include "../inc/server.h"

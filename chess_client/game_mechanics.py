@@ -37,7 +37,7 @@ def move_piece(board: Board):
         
         to_row, to_col = notation_to_index(to_square)
 
-        if check_valid_move(piece, from_row, from_col, to_row, to_col, board) == True:
+        if check_valid_move(piece, from_row, from_col, to_row, to_col, board):
             end_piece = board.get_piece(to_row, to_col)
             if (end_piece == PieceType.EMPTY or
             (piece & PieceType.WHITE and end_piece & PieceType.BLACK) or
@@ -64,7 +64,7 @@ def notation_to_index(square: str):
     #input letter minus 'a' gives column coords.
     col = ord(file) - ord('a')
     #going backwards from 8 to invert the count for chess notation counting bottom up
-    row = 8 - int(rank)
+    row = Board.BOARD_SIZE - int(rank)
     return (row, col)
 
 def check_valid_move(piece, start_row, start_col, end_row, end_col, board: Board):
@@ -186,7 +186,7 @@ def check_valid_move(piece, start_row, start_col, end_row, end_col, board: Board
                     if board.get_piece(y, x) != PieceType.EMPTY:
                         print("Path is blocked!")
                         valid = False
-                        return valid
+                        return False
                     x += step_x
                     y += step_y
                 valid = True

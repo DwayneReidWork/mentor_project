@@ -6,7 +6,11 @@
 
 #include "../inc/server.h"
 
-// Function to send all data, returns total bits on success, -1 on failure
+/// @brief Function to send all data,
+/// @param sock
+/// @param data
+/// @param data_len
+/// @return returns 0 on success, -1 on failure
 int send_all(int sock, const uint8_t *data, size_t data_len)
 {
     size_t total_sent_bits = 0;
@@ -22,7 +26,12 @@ int send_all(int sock, const uint8_t *data, size_t data_len)
     return 0;
 }
 
-// Function to receive expected data, returns a pointer to the received data buffer
+/// @brief Function to receive expected data, returns a pointer to the received data buffer
+/// @param sock
+/// @param expected_len
+/// @param dest
+/// @param dest_size
+/// @return recieved length
 int recv_expected(int sock, size_t expected_len, uint8_t *dest, size_t dest_size)
 {
     struct pollfd pfds =
@@ -64,7 +73,10 @@ int recv_expected(int sock, size_t expected_len, uint8_t *dest, size_t dest_size
     return recvd_len;
 }
 
-// Receive expected with memory allocation for expected size
+/// @brief Receive expected with memory allocation for expected size
+/// @param sock
+/// @param expected_len
+/// @return recieved bytes
 uint8_t *recv_expected_alloc(int sock, size_t expected_len)
 {
     uint8_t *recvd_bytes = malloc(expected_len);

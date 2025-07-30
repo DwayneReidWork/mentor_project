@@ -2,14 +2,14 @@ import cmd2
 import socket
 import struct
 from .netcomm import send_all, recv_expected
-from .packet import Connect, Move, Display_Board
+from .packet import Connect, Display_Board, Move, Packet, PacketType
 from .game_pieces import PieceType as PT, Board
 from .game_mechanics import move_piece, decode_piece
 #for debugging
 # from netcomm import send_all, recv_expected
-# from packet import Connect, Move, Display_Board
+# from packet import Connect, Display_Board, Move, Packet, PacketType
 # from game_pieces import PieceType as PT, Board
-# from game_mechanics import move_piece
+# from game_mechanics import move_piece, decde_piece
 
 def port_type(port_str: str) -> int:
     port = int(port_str)
@@ -18,14 +18,13 @@ def port_type(port_str: str) -> int:
     return port
 
 def receive_and_print_board(self):
-    #Recv 256 + 5 for header
-    #8 by 8 board X 4 per square = 256
-    board_bytes = recv_expected(self.sock, 261)
+    board_packet_size = (Board.BOARD_SIZE * Board.BOARD_SIZE) + len(Packet(PacketType.DISPLAY_BOARD).pack())
+    board_bytes = recv_expected(self.sock, board_packet_size)
     #Break into Squares starting after header
-    values = struct.unpack('<64I', board_bytes[5:])
+    values = struct.unpack('<64B', board_bytes[5:])
     for i, val in enumerate(values):
-        row = (i // 8)
-        col = (i % 8)
+        row = (i // Board.BOARD_SIZE)
+        col = (i % Board.BOARD_SIZE)
         ptype, color = decode_piece(val)
         piece = ptype|color
         self.board.set_piece(row, col, piece)

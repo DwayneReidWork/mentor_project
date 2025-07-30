@@ -4,9 +4,6 @@
 #include <signal.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <wchar.h>
 
 #include "../inc/game_mechanics.h"
 #include "../inc/game_pieces.h"
@@ -123,7 +120,7 @@ int server_setup(int port)
         return -1;
     }
 
-    if (0 > listen(server_fd, 3))
+    if (0 > listen(server_fd, MAX_CONNECTIONS))
     {
         perror("listen failed");
         close(server_fd);
@@ -206,23 +203,25 @@ int p_move_method(uint8_t *data)
     uinput_to_row_col(mv_pak.to_square, &end_row, &end_col);
     printf("To square\nRow: %d, Column: %d\n", end_row, end_col);
 
-    if (check_valid_move(piece, start_row, start_col, end_row, end_col))
+    if (-2 == check_valid_move(piece, start_row, start_col, end_row, end_col))
     {
-        Pieces end_piece = game->board[end_row][end_col];
-        // if space is empty or occupied by opposite color piece
-        if ((end_piece == (Pieces)EMPTY) ||
-            ((piece & WHITE) && (end_piece & BLACK)) ||
-            ((piece & BLACK) && (end_piece & WHITE)))
-        {
-            // move
-            move_piece(piece, start_row, start_col, end_row, end_col);
-        }
-        else if ((end_piece == (Pieces)EMPTY) ||
-                 ((piece & WHITE) && (end_piece & WHITE)) ||
-                 ((piece & BLACK) && (end_piece & BLACK)))
-        {
-            printf("Space Occupied by same color piece. Invalid Move.\n");
-        }
+        printf("Invalid Square Received.\n");
+        return -1;
+    }
+    Pieces end_piece = game->board[end_row][end_col];
+    // if space is empty or occupied by opposite color piece
+    if ((end_piece == (Pieces)EMPTY) ||
+        ((piece & WHITE) && (end_piece & BLACK)) ||
+        ((piece & BLACK) && (end_piece & WHITE)))
+    {
+        // move
+        move_piece(piece, start_row, start_col, end_row, end_col);
+    }
+    else if ((end_piece == (Pieces)EMPTY) ||
+             ((piece & WHITE) && (end_piece & WHITE)) ||
+             ((piece & BLACK) && (end_piece & BLACK)))
+    {
+        printf("Space Occupied by same color piece. Invalid Move.\n");
     }
     display_board();
     return 0;

@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <wchar.h>
 
 #include "../inc/game_pieces.h"
 #include "../inc/netcomm.h"

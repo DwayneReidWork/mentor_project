@@ -25,12 +25,12 @@ p_unicode_t piece_lookup[] = {
 int new_game_board()
 {
     // Empty Board
-    for (int r = 0; r < 8; r++)
-        for (int c = 0; c < 8; c++)
+    for (int r = 0; r < BOARD_SIZE; r++)
+        for (int c = 0; c < BOARD_SIZE; c++)
             game->board[r][c] = EMPTY;
 
     // Set Black Pieces
-    for (int i = 0; i < 8; i++)
+    for (int i = 0; i < BOARD_SIZE; i++)
     {
         game->board[1][i] = BLACK_PAWN;
     }
@@ -44,7 +44,7 @@ int new_game_board()
     game->board[0][4] = BLACK_QUEEN;
 
     // Set White Pieces
-    for (int j = 0; j < 8; j++)
+    for (int j = 0; j < BOARD_SIZE; j++)
     {
         game->board[6][j] = WHITE_PAWN;
     }
@@ -77,6 +77,9 @@ char *piece_unicode_lookup(Pieces piece)
     return "?";
 }
 
+/// @brief
+/// @param piece
+/// @return
 char *piece_name_lookup(Pieces piece)
 {
     size_t list_size = sizeof(piece_lookup) / sizeof(piece_lookup[0]);
@@ -96,12 +99,12 @@ int display_board()
     printf("    A   B   C   D   E   F   G   H\n");
     printf("  +---+---+---+---+---+---+---+---+\n");
 
-    for (int row = 0; row < 8; row++)
+    for (int row = 0; row < BOARD_SIZE; row++)
     {
-        int display_row = 8 - row;
+        int display_row = BOARD_SIZE - row;
         printf("%d |", display_row);
 
-        for (int col = 0; col < 8; col++)
+        for (int col = 0; col < BOARD_SIZE; col++)
         {
             Pieces piece = game->board[row][col];
             printf(" %s |", piece_unicode_lookup(piece));

@@ -7,7 +7,7 @@
 game_t *game = NULL;
 
 p_unicode_t piece_lookup[] = {
-    {.piece = EMPTY, .unicode = "."},
+    {.piece = EMPTY, .unicode = ".", .name = "EMPTY"},
     {.piece = BLACK_PAWN, .unicode = "\xe2\x99\x9f", .name = "BLACK PAWN"},
     {.piece = BLACK_KNIGHT, .unicode = "\xe2\x99\x9e", .name = "BLACK KNIGHT"},
     {.piece = BLACK_BISHOP, .unicode = "\xe2\x99\x9d", .name = "BLACK BISHOP"},
@@ -77,9 +77,9 @@ char *piece_unicode_lookup(Pieces piece)
     return "?";
 }
 
-/// @brief
+/// @brief Lookup piece name
 /// @param piece
-/// @return
+/// @return Returns piece name or '?' on unfound piece
 char *piece_name_lookup(Pieces piece)
 {
     size_t list_size = sizeof(piece_lookup) / sizeof(piece_lookup[0]);

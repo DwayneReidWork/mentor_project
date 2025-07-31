@@ -42,7 +42,7 @@ int receive_packet(int client_sock, p_header_t *header, uint8_t **dest)
     printf("Packet Received.\n");
     if (0 > bytes)
     {
-        perror("Receive Failed\n");
+        perror("Receive Failed");
         return -1;
     }
 

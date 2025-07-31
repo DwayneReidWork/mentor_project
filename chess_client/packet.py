@@ -4,7 +4,7 @@ import struct
 class PacketType(IntEnum):
     CONNECT = 1 
     MOVE = auto()
-    DISPLAY_BOARD = auto() # Connect will also start new game but this one wont need to send over username
+    DISPLAY_BOARD = auto()
 
 class Packet:
     def __init__(self, p_type: PacketType):

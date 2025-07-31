@@ -79,8 +79,8 @@ int uinput_to_row_col(char *square, int *row, int *col)
 
 int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, int end_col)
 {
-    if (start_row < 0 || start_row > 7 || start_col < 0 || start_col > 7 ||
-        end_row < 0 || end_row > 7 || end_col < 0 || end_col > 7)
+    if (start_row < 0 || start_row > BOARD_SIZE - 1 || start_col < 0 || start_col > BOARD_SIZE - 1 ||
+        end_row < 0 || end_row > BOARD_SIZE - 1 || end_col < 0 || end_col > BOARD_SIZE - 1)
     {
         printf("Attempting to move to invalid board position.\n");
         // returning -2 to not conflict with boolean return
@@ -105,13 +105,11 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
     case PAWN:
         if (piece & WHITE)
         {
-            printf("White Pawn\n");
             direction = -1;
             home_row = 6;
         }
         else
         {
-            printf("Black Pawn\n");
             direction = 1;
             home_row = 1;
         }
@@ -133,7 +131,7 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
                 valid_move = false;
             }
         }
-        else if (row_diff == 2 * direction && col_diff == 0 && start_row == home_row)
+        else if (0 == col_diff && (2 * direction == row_diff) && start_row == home_row)
         {
             intermediate_row = start_row + direction;
             intermediate_target = game->board[intermediate_row][start_col];
@@ -141,6 +139,7 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
             if ((intermediate_target & NOCOLOR) == EMPTY && (target & NOCOLOR) == EMPTY)
             {
                 valid_move = true;
+                break;
             }
             else
             {
@@ -169,7 +168,6 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
         break;
 
     case KNIGHT:
-        printf("Knight\n");
         row_diff = abs(end_row - start_row);
         col_diff = abs(end_col - start_col);
 
@@ -185,7 +183,6 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
         break;
 
     case BISHOP:
-        printf("Bishop\n");
         dir_x = end_col - start_col;
         dir_y = end_row - start_row;
 
@@ -223,7 +220,6 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
         break;
 
     case ROOK:
-        printf("Rook\n");
         step_x = 0;
         step_y = 0;
         dir_x = end_col - start_col;
@@ -266,7 +262,6 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
         break;
 
     case QUEEN:
-        printf("Queen\n");
         step_x = 0;
         step_y = 0;
         dir_x = end_col - start_col;
@@ -334,7 +329,6 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
         break;
 
     case KING:
-        printf("King\n");
         // Currently only has logic for moving not castling
         dir_x = end_row - start_row;
         dir_y = end_col - start_col;
@@ -353,21 +347,18 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
         break;
     }
 
-    if (valid_move == false)
-    {
-        printf("Invalid Move.\n");
-    }
     return valid_move;
 }
 
 int move_piece(Pieces piece, int start_row, int start_col, int end_row, int end_col)
 {
-    if (start_row < 0 || start_row > 7 || start_col < 0 || start_col > 7 ||
-        end_row < 0 || end_row > 7 || end_col < 0 || end_col > 7)
+    if (start_row < 0 || start_row > BOARD_SIZE - 1 || start_col < 0 || start_col > BOARD_SIZE - 1 ||
+        end_row < 0 || end_row > BOARD_SIZE - 1 || end_col < 0 || end_col > BOARD_SIZE - 1)
     {
         printf("Attempting to move to invalid board position.\n");
         return -1;
     }
+
     game->board[start_row][start_col] = EMPTY;
     game->board[end_row][end_col] = piece;
     return 0;

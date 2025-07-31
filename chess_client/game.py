@@ -20,8 +20,9 @@ def port_type(port_str: str) -> int:
 def receive_and_print_board(self):
     board_packet_size = (Board.BOARD_SIZE * Board.BOARD_SIZE) + len(Packet(PacketType.DISPLAY_BOARD).pack())
     board_bytes = recv_expected(self.sock, board_packet_size)
+    header_size = 5
     #Break into Squares starting after header
-    values = struct.unpack('<64B', board_bytes[5:])
+    values = struct.unpack('<64B', board_bytes[header_size:])
     for i, val in enumerate(values):
         row = (i // Board.BOARD_SIZE)
         col = (i % Board.BOARD_SIZE)

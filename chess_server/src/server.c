@@ -184,37 +184,42 @@ int p_connect_method(uint8_t *data)
 
 int p_move_method(uint8_t *data)
 {
-    printf("Move Request Received!\n");
     // copy recieved data into move pack struct
     p_move_t mv_pak;
-    memcpy(&mv_pak.from_square, data, 2);
-    memcpy(&mv_pak.to_square, data + 3, 2);
+    memcpy(&mv_pak.from_square, data, SQUARE_SIZE);
+    memcpy(&mv_pak.to_square, data + SQUARE_SIZE + 1, SQUARE_SIZE);
     // null term moves
-    mv_pak.from_square[2] = '\0';
-    mv_pak.to_square[2] = '\0';
+    mv_pak.from_square[SQUARE_SIZE] = '\0';
+    mv_pak.to_square[SQUARE_SIZE] = '\0';
 
     printf("Received move from %.2s to %.2s.\n", mv_pak.from_square, mv_pak.to_square);
 
     // convert start and end squares to row/col
-    int start_row, start_col, end_row, end_col;
+    int start_row, start_col, end_row, end_col, status;
     uinput_to_row_col(mv_pak.from_square, &start_row, &start_col);
     Pieces piece = game->board[start_row][start_col];
-    printf("From Square\nRow: %d, Column: %d\n", start_row, start_col);
     uinput_to_row_col(mv_pak.to_square, &end_row, &end_col);
-    printf("To square\nRow: %d, Column: %d\n", end_row, end_col);
 
-    if (-2 == check_valid_move(piece, start_row, start_col, end_row, end_col))
+    status = check_valid_move(piece, start_row, start_col, end_row, end_col);
+
+    if (-2 == status)
     {
         printf("Invalid Square Received.\n");
         return -1;
     }
+
+    if (!status)
+    {
+        printf("Move rejected.\n");
+        return -1;
+    }
+
     Pieces end_piece = game->board[end_row][end_col];
     // if space is empty or occupied by opposite color piece
     if ((end_piece == (Pieces)EMPTY) ||
         ((piece & WHITE) && (end_piece & BLACK)) ||
         ((piece & BLACK) && (end_piece & WHITE)))
     {
-        // move
         move_piece(piece, start_row, start_col, end_row, end_col);
     }
     else if ((end_piece == (Pieces)EMPTY) ||

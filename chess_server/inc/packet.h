@@ -7,6 +7,7 @@
 #include "../inc/game_pieces.h"
 
 #define MAX_USERNAME_LEN 128
+#define STATUS_MSG_LEN 64
 
 typedef enum __attribute__((__packed__))
 {
@@ -43,6 +44,7 @@ typedef struct __attribute__((__packed__))
 {
     p_header_t header;
     PieceType board_state[BOARD_SIZE][BOARD_SIZE];
+    char status_msg[STATUS_MSG_LEN];
 } p_current_board_t;
 
 typedef struct

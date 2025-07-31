@@ -11,6 +11,8 @@ from .game_mechanics import move_piece, decode_piece
 # from game_pieces import PieceType as PT, Board
 # from game_mechanics import move_piece, decde_piece
 
+STATUS_MSG_LEN = 64
+
 def port_type(port_str: str) -> int:
     port = int(port_str)
     if port < 0 or port > 65535:
@@ -18,11 +20,11 @@ def port_type(port_str: str) -> int:
     return port
 
 def receive_and_print_board(self):
-    board_packet_size = (Board.BOARD_SIZE * Board.BOARD_SIZE) + len(Packet(PacketType.DISPLAY_BOARD).pack())
+    board_packet_size = (Board.BOARD_SIZE * Board.BOARD_SIZE) + len(Packet(PacketType.DISPLAY_BOARD).pack()) + STATUS_MSG_LEN
     board_bytes = recv_expected(self.sock, board_packet_size)
     header_size = 5
     #Break into Squares starting after header
-    values = struct.unpack('<64B', board_bytes[header_size:])
+    values = struct.unpack('<64B', board_bytes[header_size:header_size+STATUS_MSG_LEN])
     for i, val in enumerate(values):
         row = (i // Board.BOARD_SIZE)
         col = (i % Board.BOARD_SIZE)
@@ -30,6 +32,13 @@ def receive_and_print_board(self):
         piece = ptype|color
         self.board.set_piece(row, col, piece)
     self.board.display()
+
+    #For Printing Status of move (Success/Fail)
+    status_start = header_size + (Board.BOARD_SIZE * Board.BOARD_SIZE)
+    status_end = status_start + STATUS_MSG_LEN
+    #.split(b'\x00) trims null terminator
+    status_msg = board_bytes[status_start:status_end].split(b'\x00', 1)[0].decode('utf-8', errors='ignore')
+    print(f"Server status: {status_msg}")
 
 
 class CmdController(cmd2.Cmd):

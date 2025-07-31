@@ -67,12 +67,13 @@ int handle_client(int client_sock)
         p_connect_method(data);
         break;
     case P_MOVE:
-        p_move_method(data);
-        send_board(client_sock);
+        int move_result = p_move_method(data);
+        const char *msg = (move_result == 0) ? "Move accepted" : "Invalid move";
+        send_board(client_sock, msg);
         break;
     case P_DISPLAY_BOARD:
         printf("Display board packet recieved\n");
-        send_board(client_sock);
+        send_board(client_sock, "Board State");
         display_board();
         break;
     default:
@@ -232,10 +233,14 @@ int p_move_method(uint8_t *data)
     return 0;
 }
 
-int send_board(int client_sock)
+int send_board(int client_sock, const char *status_msg)
 {
     p_current_board_t current_board;
     memcpy(current_board.board_state, game->board, sizeof(game->board));
+
+    strncpy(current_board.status_msg, status_msg, STATUS_MSG_LEN - 1);
+    current_board.status_msg[STATUS_MSG_LEN - 1] = '\0';
+
     if (-1 == send_all(client_sock, (const uint8_t *)&current_board, sizeof(current_board)))
     {
         printf("Error sending board");

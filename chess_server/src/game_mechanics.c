@@ -350,6 +350,13 @@ int check_valid_move(Pieces piece, int start_row, int start_col, int end_row, in
     return valid_move;
 }
 
+/// @brief Updates board to reflect valid moves
+/// @param piece
+/// @param start_row
+/// @param start_col
+/// @param end_row
+/// @param end_col
+/// @return 0 on success. 'game->board' updated.
 int move_piece(Pieces piece, int start_row, int start_col, int end_row, int end_col)
 {
     if (start_row < 0 || start_row > BOARD_SIZE - 1 || start_col < 0 || start_col > BOARD_SIZE - 1 ||

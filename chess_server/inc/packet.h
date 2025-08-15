@@ -5,6 +5,7 @@
 #include <sys/types.h>
 
 #include "../inc/game_pieces.h"
+#include "../inc/server.h"
 
 #define MAX_USERNAME_LEN 128
 #define STATUS_MSG_LEN 64
@@ -35,8 +36,8 @@ typedef struct __attribute__((__packed__))
 typedef struct __attribute__((__packed__))
 {
     p_header_t header;
-    char from_square[3];
-    char to_square[3];
+    char from_square[SQUARE_SIZE + 1];
+    char to_square[SQUARE_SIZE + 1];
     uint8_t promotee;
 } p_move_t;
 

@@ -8,8 +8,10 @@ int main(int argc, char *argv[])
     int port = DEFAULT_PORT;
     if (1 < argc)
     {
-        // atoi converts string to int
-        port = atoi(argv[1]);
+        // // atoi converts string to int
+        // atoi is BAD!
+        // port = atoi(argv[1]);
+        port = (int)strtol(argv[1], NULL, 10);
     }
 
     server_setup(port);
